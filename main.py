@@ -1,5 +1,4 @@
 from flask import Flask, request
-import requests
 #import json
 #import simplejson as json
 import rson as json
@@ -17,24 +16,24 @@ host = 'http://127.0.0.1:5000/'
 def test_positive():
     f = open("webhook_example_positive.txt")
     file_content = f.read()
-    data = {"payload": file_content}
-    r = requests.post(host+"webhook", data=data)
-    return r.text
+    return webhook_handler(file_content)
 
 
 @app.route("/testn", methods=["GET"])
 def test_negative():
     f = open("webhook_example_negative.txt")
     file_content = f.read()
-    data = {"payload": file_content}
-    r = requests.post(host+"webhook", data=data)
-    return r.text
-
+    return webhook_handler(file_content)
 
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
     values = request.values['payload']
+    return webhook_handler(values)
+
+
+def webhook_handler(payload_text):
+    values = payload_text
     try:
         values = json.loads(str(values))
         payload = values['payload']
@@ -45,7 +44,6 @@ def webhook():
     return run_if_target(changed_files)
 
 
-
 def get_changed_files_from_commit(commit):
     return commit["added"] + commit["modified"]
 
@@ -54,8 +52,7 @@ def get_changed_files_from_payload(payload):
     commits = payload['commits']
     changed_files = []
     for c in commits:
-        #changed_files.append(get_changed_files_from_commit(c))
-        changed_files+=get_changed_files_from_commit(c)
+        changed_files += get_changed_files_from_commit(c)
     return changed_files
 
 
