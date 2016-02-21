@@ -121,7 +121,7 @@
                 "timestamp": "2015-07-27T14:27:49Z",
                 "modified": [
                     "OnToology/dantest/alojamiento.owl/diagrams/ar2dtool-class/alojamiento.owl.csv",
-                    "OnToology/dantest/alojamiento.owl/diagrams/ar2dtool-class/alojamiento.owl.png.dot",
+                    "OnToology/dantest/alojamiento.owl/diagrams/ar2dtool-class/alojamiento.owl.png.dot.myxml",
                     "OnToology/dantest/alojamiento.owl/diagrams/ar2dtool-class/alojamiento.owl.png.graphml",
                     "OnToology/dantest/alojamiento.owl/diagrams/ar2dtool-taxonomy/alojamiento.owl.png",
                     "OnToology/dantest/alojamiento.owl/diagrams/ar2dtool-taxonomy/alojamiento.owl.png.dot",

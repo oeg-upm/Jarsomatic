@@ -1,15 +1,25 @@
 from flask import Flask, request
+import ConfigParser
 #import json
 #import simplejson as json
 import rson as json
-
 import re
-
+from subprocess import call
 
 app = Flask(__name__)
-
 target_files = ['.jar', '.csv']
-host = 'http://127.0.0.1:5000/'
+
+config = ConfigParser.ConfigParser()
+config.read('jarsomatic.cfg')
+jar_location = config.get('JAR', 'location')
+jar_command = config.get('JAR', 'command')
+target_files_str = config.get('DEFAULT', 'watch')
+target_files = [f.strip().strip("'").strip('"') for f in target_files_str.split(",")]
+print "location: "+jar_location
+print "command: "+jar_command
+print "target_files_str: "+target_files_str
+for f in target_files:
+    print "file: "+f
 
 
 @app.route("/testp", methods=["GET"])
@@ -61,29 +71,32 @@ def run_if_target(changed_files):
     found = False
     for f in changed_files:
         for t in target_files:
-            if t in f:
+            if t == f:
                 found = True
                 break
         if found:
             break
     if found:
         print "Rerun"
-        return "Rerun"
+        comm = "cd "+jar_location+"; "+jar_command
+        call(comm, shell=True)
+        return "Rerun: "+"\ncd "+jar_location+";\n"+jar_command
     else:
         print "Ignore"
         return "Ignore"
 
 
-#source: http://stackoverflow.com/questions/21495598/simplejson-encoding-issue-illegal-character
+# source: http://stackoverflow.com/questions/21495598/simplejson-encoding-issue-illegal-character
 def remove_control_chars(s):
-    control_chars = ''.join(map(unichr, range(0,32) + range(127,160)))
+    control_chars = ''.join(map(unichr, range(0, 32) + range(127, 160)))
     control_char_re = re.compile('[%s]' % re.escape(control_chars))
     return control_char_re.sub('', s)
 
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return "Welcome to Jarsomatic" + "<br><br><a href='testp'>Test Positive</a>" + \
+           "<br><br><a href='testn'>Test Negative</a>"
 
 
 if __name__ == "__main__":
