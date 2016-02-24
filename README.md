@@ -6,6 +6,7 @@ An application to run jar when a specific file(s) are changed on a repo in Githu
 Collaborators: Daniel Garijo (@dgarijo)
 
 
+
 ###Configuration file:
 The configuration file should be named *jarsomatic.cfg* and located in the top level of Jarsomatic folder
 
@@ -18,6 +19,11 @@ location: /home/ahmad/target
 command: java my.java -a -lang english
 
 ```
+
+###The location of Jarsomatic
+In jarsomatic.py, the value of ```app_home``` need to be changed to the absolute directory of the Jarsomatic folder
+
+
 
 ###Deployment
 For using wsgi you can update jarsomatic.wsgi according to your server settings

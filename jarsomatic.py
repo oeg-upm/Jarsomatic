@@ -5,12 +5,16 @@ import ConfigParser
 import rson as json
 import re
 from subprocess import call
+import os.path
 
 app = Flask(__name__)
 target_files = ['.jar', '.csv']
-
+app_home = ''
+config_file = 'jarsomatic.cfg'
 config = ConfigParser.ConfigParser()
-config.read('jarsomatic.cfg')
+if not os.path.isfile(os.path.join(app_home, config_file)):
+    print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
+config.read(os.path.join(app_home, config_file))
 jar_location = config.get('JAR', 'location')
 jar_command = config.get('JAR', 'command')
 target_files_str = config.get('DEFAULT', 'watch')
@@ -24,14 +28,16 @@ for f in target_files:
 
 @app.route("/testp", methods=["GET"])
 def test_positive():
-    f = open("webhook_example_positive.txt")
+    d = os.path.join(app_home, "webhook_example_positive.txt")
+    f = open(d)
     file_content = f.read()
     return webhook_handler(file_content)
 
 
 @app.route("/testn", methods=["GET"])
 def test_negative():
-    f = open("webhook_example_negative.txt")
+    d = os.path.join(app_home, "webhook_example_negative.txt")
+    f = open(d)
     file_content = f.read()
     return webhook_handler(file_content)
 
