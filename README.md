@@ -21,8 +21,8 @@ command: java my.java -a -lang english
 ```
 
 ###The location of Jarsomatic
-In jarsomatic.py, the value of ```app_home``` need to be changed to the absolute directory of the Jarsomatic folder
-
+In config.py, the value of ```app_home``` need to be changed to the absolute directory of the Jarsomatic folder.
+Create file config.py next to jarsomatic.py
 
 
 ###Deployment
