@@ -25,6 +25,12 @@ In config.py, the value of ```app_home``` need to be changed to the absolute dir
 Create file config.py next to jarsomatic.py
 
 
+###Automatic deployment with Jarsomatic
+To do so, the recommended way is to use access token
+1. create access token [how to](https://github.com/blog/1509-personal-api-tokens)
+2. git clone https://<token>@github.com/owner/repo.git
+
+
 ###Deployment
 For using wsgi you can update jarsomatic.wsgi according to your server settings
 [Apache with WSGI](http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/)
