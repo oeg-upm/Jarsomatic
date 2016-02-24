@@ -6,10 +6,11 @@ import rson as json
 import re
 from subprocess import call
 import os.path
+from config import app_home
 
 app = Flask(__name__)
 target_files = ['.jar', '.csv']
-app_home = ''
+#app_home = ''
 config_file = 'jarsomatic.cfg'
 config = ConfigParser.ConfigParser()
 if not os.path.isfile(os.path.join(app_home, config_file)):
