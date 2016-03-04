@@ -3,7 +3,11 @@
 An application to run jar when a specific file(s) are changed on a repo in Github
 
 
-Collaborators: Daniel Garijo (@dgarijo)
+Collaborators: Daniel Garijo (@dgarijo), Ahmad Alobaid
+
+###Diagram 
+![Image](../master/Jarsomatic Diagram.png?raw=true)
+
 
 
 
