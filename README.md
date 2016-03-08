@@ -5,13 +5,13 @@ An application to run jar when a specific file(s) are changed on a repo in Githu
 
 Collaborators: Daniel Garijo (@dgarijo), Ahmad Alobaid
 
-###Diagram 
+###Diagram: 
 ![Image](../master/Jarsomatic Diagram.png?raw=true)
 
 
 
 
-###Configuration file:
+###Jarsomatic Configuration file:
 The configuration file should be named *jarsomatic.cfg* and located in the top level of Jarsomatic folder
 
 a sample configuration file is below
@@ -23,6 +23,9 @@ location: /home/ahmad/target
 command: java my.java -a -lang english
 
 ```
+
+###JAR Configuration file:
+There should a configuration file per monitored JAR
 
 ###The location of Jarsomatic
 In config.py, the value of ```app_home``` need to be changed to the absolute directory of the Jarsomatic folder.
