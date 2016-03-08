@@ -56,7 +56,7 @@ def webhook_handler(payload_text):
         payload = values['payload']
     except Exception as e:
         print "exception: "+str(e)
-        return "exception occured"
+        return "exception occurred"
     changed_files = get_changed_files_from_payload(payload)
     return run_if_target(changed_files)
 
@@ -74,6 +74,7 @@ def get_changed_files_from_payload(payload):
 
 
 def run_if_target(changed_files):
+    jarsomatic_branch = "jarsomatic"
     print "found %d files"%(len(changed_files))
     found = False
     for f in changed_files:
@@ -85,7 +86,9 @@ def run_if_target(changed_files):
             break
     if found:
         print "Rerun"
-        comm = "cd "+jar_location+"; "+jar_command
+        comm = "cd "+jar_location+"; "  # Go to the project location
+        comm += "git pull; "  # get latest update
+        comm += jar_command + "; "  # run the command and generate the output
         call(comm, shell=True)
         return "Rerun: "+"\ncd "+jar_location+";\n"+jar_command
     else:
