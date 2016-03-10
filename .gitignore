@@ -1,7 +1,13 @@
+#Jarsomatic Configuration Files
 config.py
 jarsomatic.cfg
 jarsomatic.wsgi
+
+#pycharm
 .idea
+
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
