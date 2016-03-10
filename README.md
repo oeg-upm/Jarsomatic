@@ -34,6 +34,7 @@ Create file config.py next to jarsomatic.py
 
 ###Automatic deployment with Jarsomatic
 To do so, the recommended way is to use access token
+
 1. create access token [how to](https://github.com/blog/1509-personal-api-tokens)
 2. git clone https://<token>@github.com/owner/repo.git
 
