@@ -7,6 +7,9 @@ import re
 from subprocess import call
 import os.path
 from config import app_home
+from github import Github
+
+
 
 app = Flask(__name__)
 target_files = ['.jar', '.csv']
@@ -20,11 +23,19 @@ jar_location = config.get('JAR', 'location')
 jar_command = config.get('JAR', 'command')
 target_files_str = config.get('DEFAULT', 'watch')
 target_files = [f.strip().strip("'").strip('"') for f in target_files_str.split(",")]
+github_token = config.get('GITHUB', 'token')
 print "location: "+jar_location
 print "command: "+jar_command
 print "target_files_str: "+target_files_str
+
 for f in target_files:
     print "file: "+f
+
+g = Github(github_token)
+try:
+    g.get_user().login
+except Exception as e:
+    print "Github token is invalid"
 
 
 @app.route("/testp", methods=["GET"])
@@ -71,6 +82,31 @@ def get_changed_files_from_payload(payload):
     for c in commits:
         changed_files += get_changed_files_from_commit(c)
     return changed_files
+
+
+def create_pull_request(repo_str):
+    global g
+    username = g.get_user().login
+    repo = g.get_repo(repo_str)
+    title = 'Jarsomatic'
+    body = 'Jarsomatic pull request'
+    try:
+        repo.create_pull(head=username+':master', base='master', title=title, body=body)
+        return True
+    except Exception as e:
+        print "cannot create pull request, error:  <%s>"%(str(e))
+        return False
+
+
+def fork_repo(repo_str):
+    global g
+    u = g.get_user()
+    repo = g.get_repo(repo_str)
+    try:
+        u.create_fork(repo)
+        return True
+    except Exception as e:
+        print "error forking the repo %s, <%s>"%(repo_str, str(e))
 
 
 def run_if_target(changed_files):
