@@ -1,7 +1,7 @@
 #Jarsomatic Configuration Files
-config.py
 jarsomatic.cfg
 jarsomatic.wsgi
+jar.cfg
 
 #pycharm
 .idea

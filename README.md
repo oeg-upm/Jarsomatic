@@ -17,20 +17,19 @@ The configuration file should be named *jarsomatic.cfg* and located in the top l
 a sample configuration file is below
 ```
 [DEFAULT]
-watch: OnToology/target.csv, "OnToology/alojamiento.xml"
-[JAR]
-location: /home/ahmad/target
-command: java my.java -a -lang english
+tmp: /tmp
+[GITHUB]
+token: xxxxxxxxxxxxxxxxxx
 
 ```
 
 ###JAR Configuration file:
 There should a configuration file per monitored JAR
-
-###The location of Jarsomatic
-In config.py, the value of ```app_home``` need to be changed to the absolute directory of the Jarsomatic folder.
-Create file config.py next to jarsomatic.py
-
+```
+[DEFAULT]
+watch: "dir1/file1.owl", dir2/file2.csv
+command: ls
+```
 
 ###Automatic deployment with Jarsomatic
 To do so, the recommended way is to use access token
