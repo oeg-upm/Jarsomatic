@@ -236,9 +236,9 @@ def workflow(changed_files, repo_str):
         else:
             print "pull request is False"
             msg += " And pull request failed to be created"
-    # delete_local_copy()
     else:
         print "not found"
+    delete_local_copy()
     return msg
 
 
