@@ -135,7 +135,7 @@ def update_fork(repo_str):
     global g
     repo = g.get_repo(repo_str)
     try:
-        comm = "cd %s ; git pull %s ; git push "%(get_repo_abs_path(), repo.clone_url)
+        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull %s ; git push "%(get_repo_abs_path(), repo.clone_url)
         print "command: %s"%(comm)
         call(comm, shell=True)
     except Exception as e:
