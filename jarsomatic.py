@@ -10,7 +10,7 @@ import random
 import string
 from github import Github
 
-TEST = True
+TEST = False
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
 app = Flask(__name__)
@@ -19,6 +19,7 @@ config_file = 'jarsomatic.cfg'
 config = ConfigParser.ConfigParser()
 if not os.path.isfile(os.path.join(app_home, config_file)):
     print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
+
 config.read(os.path.join(app_home, config_file))
 github_token = config.get('GITHUB', 'token')
 temp_dir = config.get('DEFAULT', 'tmp')
@@ -138,18 +139,19 @@ def run_if_target(changed_files, target_files, jar_command):
     if found:
         print "Run"
         comm = "cd "+os.path.join(temp_dir, repo_rel_dir, repo_name)+"; "  # Go to the project location
-        if not TEST:
-            comm += "git pull; "  # get latest update
+        # Because we already get the fork
+        # if not TEST:
+        #     comm += "git pull; "  # get latest update
         comm += jar_command  # run the command and generate the output
         call(comm, shell=True)
         comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
         call(comm, shell=True)
-        return "Run: "+comm
+        return found, "Run: "+comm
     else:
         comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
         call(comm, shell=True)
         print "Ignore"
-        return "Ignore"
+        return found, "Ignore"
 
 
 # source: http://stackoverflow.com/questions/21495598/simplejson-encoding-issue-illegal-character
@@ -160,7 +162,8 @@ def remove_control_chars(s):
 
 
 def clone_repo(repo_url):
-    comm = "cd %s; mkdir %s ;git clone %s"%(temp_dir, repo_rel_dir, repo_url)
+    comm = "cd %s; mkdir %s ; cd %s; git clone %s"%(temp_dir, repo_rel_dir, repo_rel_dir, repo_url)
+    print "command: %s"%(comm)
     call(comm, shell=True)
 
 
@@ -172,6 +175,12 @@ def copy_repo():
     print "copy command: "+comm
     call(comm, shell=True)
     print "command executed"
+
+
+def push_changes():
+    comm = "cd %s; git add . ; git commit -m 'jarsomatic update' ; git push ;"%(os.path.join(temp_dir, repo_rel_dir, repo_name))
+    print "command: %s"%(comm)
+    call(comm, shell=True)
 
 
 def workflow(changed_files, repo_str):
@@ -186,7 +195,14 @@ def workflow(changed_files, repo_str):
     print "getting jar configurations"
     target_files, jar_command = get_jar_config(os.path.join(temp_dir, repo_rel_dir, repo_name, 'jar.cfg'))
     print "running if target"
-    return run_if_target(changed_files, target_files, jar_command)
+    is_found, msg = run_if_target(changed_files, target_files, jar_command)
+    if is_found:
+        push_changes()
+        if create_pull_request(repo_str):
+            msg += " And pull request is created"
+        else:
+            msg += " And pull request failed to be created"
+    return msg
 
 
 def get_jar_config(config_file):

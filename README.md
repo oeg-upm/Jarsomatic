@@ -24,7 +24,7 @@ token: xxxxxxxxxxxxxxxxxx
 ```
 
 ###JAR Configuration file:
-There should a configuration file per monitored JAR
+There should a configuration file per monitored JAR (should be named jar.cfg)
 ```
 [DEFAULT]
 watch: "dir1/file1.owl", dir2/file2.csv
