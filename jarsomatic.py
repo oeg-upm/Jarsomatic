@@ -26,7 +26,8 @@ temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
 
 try:
-    g.get_user().login
+    u = g.get_user().login
+    print "user %s, token %s"%(u, github_token)
 except Exception as e:
     print "Github token is invalid"
 
@@ -117,12 +118,31 @@ def create_pull_request(repo_str):
 def fork_repo(repo_str):
     global g
     u = g.get_user()
+    print "user %s"%(u.login)
     repo = g.get_repo(repo_str)
+    print "repo %s"%(repo.full_name)
     try:
+        # print "will create fork"
         f = u.create_fork(repo)
         return f.clone_url
     except Exception as e:
         print "error forking the repo %s, <%s>"%(repo_str, str(e))
+
+
+def update_fork(repo_str):
+    global g
+    repo = g.get_repo(repo_str)
+    try:
+        comm = "cd %s ; git pull %s ; git push "%(get_repo_abs_path(), repo.clone_url)
+        print "command: %s"%(comm)
+        call(comm, shell=True)
+    except Exception as e:
+        print "error updating fork of repo %s, <%s>"%(repo_str, str(e))
+
+
+def delete_local_copy():
+    comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
+    call(comm, shell=True)
 
 
 def run_if_target(changed_files, target_files, jar_command):
@@ -144,12 +164,12 @@ def run_if_target(changed_files, target_files, jar_command):
         #     comm += "git pull; "  # get latest update
         comm += jar_command  # run the command and generate the output
         call(comm, shell=True)
-        comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
-        call(comm, shell=True)
+        #comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
+        #call(comm, shell=True)
         return found, "Run: "+comm
     else:
-        comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
-        call(comm, shell=True)
+        #comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
+        #call(comm, shell=True)
         print "Ignore"
         return found, "Ignore"
 
@@ -162,7 +182,8 @@ def remove_control_chars(s):
 
 
 def clone_repo(repo_url):
-    comm = "cd %s; mkdir %s ; cd %s; git clone %s"%(temp_dir, repo_rel_dir, repo_rel_dir, repo_url)
+    repo_url_with_token =  "https://"+github_token+"@"+repo_url.strip()[8:]
+    comm = "cd %s; mkdir %s ; cd %s; git clone %s"%(temp_dir, repo_rel_dir, repo_rel_dir, repo_url_with_token)
     print "command: %s"%(comm)
     call(comm, shell=True)
 
@@ -178,7 +199,7 @@ def copy_repo():
 
 
 def push_changes():
-    comm = "cd %s; git add . ; git commit -m 'jarsomatic update' ; git push ;"%(os.path.join(temp_dir, repo_rel_dir, repo_name))
+    comm = "cd %s; git add . ; git commit -m 'jarsomatic update' ; git push ;"%(get_repo_abs_path())
     print "command: %s"%(comm)
     call(comm, shell=True)
 
@@ -188,12 +209,13 @@ def workflow(changed_files, repo_str):
         print "coping the source repo"
         copy_repo()
     else:
-        print "forking the repo"
+        print "forking the repo %s"%(repo_str)
         repo_url = fork_repo(repo_str)
         print "cloning the repo"
         clone_repo(repo_url)
+        update_fork(repo_str)  # update from upstream as the cloned repo is an old fork due to Github limitation
     print "getting jar configurations"
-    target_files, jar_command = get_jar_config(os.path.join(temp_dir, repo_rel_dir, repo_name, 'jar.cfg'))
+    target_files, jar_command = get_jar_config(os.path.join(get_repo_abs_path(), 'jar.cfg'))
     print "running if target"
     is_found, msg = run_if_target(changed_files, target_files, jar_command)
     if is_found:
@@ -202,6 +224,7 @@ def workflow(changed_files, repo_str):
             msg += " And pull request is created"
         else:
             msg += " And pull request failed to be created"
+    # delete_local_copy()
     return msg
 
 
@@ -214,12 +237,17 @@ def get_jar_config(config_file):
     confi.read(config_file)
     print "getting the command"
     jar_command = confi.get('DEFAULT', 'command')
+    print "jar_command %s"%jar_command
     print "target files"
     target_files_str = confi.get('DEFAULT', 'watch')
     print "watch"
     target_files = [f.strip().strip("'").strip('"') for f in target_files_str.split(",")]
     print "target return"
     return target_files, jar_command
+
+
+def get_repo_abs_path():
+    return os.path.join(temp_dir, repo_rel_dir, repo_name)
 
 if __name__ == "__main__":
     app.run()
