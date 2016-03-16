@@ -201,7 +201,7 @@ def copy_repo():
 
 
 def push_changes():
-    comm = "cd %s; git add . ; git commit -m 'jarsomatic update' ; git push ;"%(get_repo_abs_path())
+    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ;  git add . ; git commit -m 'jarsomatic update' ; git push ;"%(get_repo_abs_path())
     print "command: %s"%(comm)
     call(comm, shell=True)
 
