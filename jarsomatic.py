@@ -56,6 +56,8 @@ def test_negative():
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    global repo_rel_dir
+    repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
     values = request.values['payload']
     return webhook_handler(values)
 
@@ -224,7 +226,7 @@ def workflow(changed_files, repo_str):
             msg += " And pull request is created"
         else:
             msg += " And pull request failed to be created"
-    # delete_local_copy()
+    delete_local_copy()
     return msg
 
 
