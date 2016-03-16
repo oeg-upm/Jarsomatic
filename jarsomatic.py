@@ -59,7 +59,7 @@ def webhook():
     global repo_rel_dir
     repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
     print "values %s"%(str(request.values))
-    print "data %s"%(str(request.data))
+    # print "data %s"%(str(request.data))
     # values = request.values['payload']
     values = request.values
     return webhook_handler(values)
