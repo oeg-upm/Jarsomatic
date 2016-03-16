@@ -73,7 +73,7 @@ def webhook_handler(payload_text):
         # payload = values
     except Exception as e:
         print "exception: "+str(e)
-        return "exception occurred"
+        return "exception occurred %s"%(str(values))
     print "will get changed files from payload"
     changed_files = get_changed_files_from_payload(payload)
     print "will get the repo from payload"
