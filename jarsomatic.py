@@ -58,7 +58,10 @@ def test_negative():
 def webhook():
     global repo_rel_dir
     repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
-    values = request.values['payload']
+    print "values %s"%(str(request.values))
+    print "data %s"%(str(request.data))
+    # values = request.values['payload']
+    values = request.values
     return webhook_handler(values)
 
 
@@ -67,6 +70,7 @@ def webhook_handler(payload_text):
     try:
         values = json.loads(str(values))
         payload = values['payload']
+        # payload = values
     except Exception as e:
         print "exception: "+str(e)
         return "exception occurred"
