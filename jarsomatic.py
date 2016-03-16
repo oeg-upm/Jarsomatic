@@ -58,7 +58,11 @@ def test_negative():
 def webhook():
     global repo_rel_dir
     repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
-    print "values %s"%(str(request.values))
+    print "values <%s>\n\n"%(str(request.values))
+    try:
+        print "values of payload <%s>\n\n"%(str(request.values['payload']))
+    except:
+        pass
     # print "data %s"%(str(request.data))
     # values = request.values['payload']
     values = request.values
