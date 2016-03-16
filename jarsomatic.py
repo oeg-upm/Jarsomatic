@@ -109,6 +109,11 @@ def create_pull_request(repo_str):
     repo = g.get_repo(repo_str)
     title = 'Jarsomatic'
     body = 'Jarsomatic pull request'
+    print "will delete old pull requests"
+    for p in repo.get_pulls():
+        if p.title == title:
+            p.edit(state="closed")
+    print "deleted old pull requests"
     try:
         repo.create_pull(head=username+':master', base='master', title=title, body=body)
         return True
@@ -220,13 +225,20 @@ def workflow(changed_files, repo_str):
     target_files, jar_command = get_jar_config(os.path.join(get_repo_abs_path(), 'jar.cfg'))
     print "running if target"
     is_found, msg = run_if_target(changed_files, target_files, jar_command)
+    print "after running"
     if is_found:
+        print "is found"
         push_changes()
+        print "after push changes"
         if create_pull_request(repo_str):
+            print "pull request is True"
             msg += " And pull request is created"
         else:
+            print "pull request is False"
             msg += " And pull request failed to be created"
-    delete_local_copy()
+    # delete_local_copy()
+    else:
+        print "not found"
     return msg
 
 
