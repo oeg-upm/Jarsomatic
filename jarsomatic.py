@@ -40,7 +40,7 @@ def hello():
 
 @app.route("/testp", methods=["GET"])
 def test_positive():
-    d = os.path.join(app_home, "webhook_example_positive.txt")
+    d = os.path.join(app_home, "webhook_example_positive_nopayload.txt")
     f = open(d)
     file_content = f.read()
     file_content = json.loads(file_content)
@@ -49,7 +49,7 @@ def test_positive():
 
 @app.route("/testn", methods=["GET"])
 def test_negative():
-    d = os.path.join(app_home, "webhook_example_negative.txt")
+    d = os.path.join(app_home, "webhook_example_negative_nopayload.txt")
     f = open(d)
     file_content = f.read()
     file_content = json.loads(file_content)
@@ -79,7 +79,7 @@ def webhook():
     return webhook_handler(values)
 
 
-def webhook_handler(values):
+def webhook_handler(payload):
     # values are expected to be a dict
     try:
         # print '\n\n****  values ***'
@@ -94,7 +94,7 @@ def webhook_handler(values):
 
         # values = json.loads(str(values))
         # payload = values['payload']
-        payload = values.get('payload')
+        #payload = values.get('payload')
         print "payload %s"%(str(payload))
         # payload = values
     except Exception as e:
