@@ -70,6 +70,10 @@ def webhook():
     # print "data %s"%(str(request.data))
     # values = request.values['payload']
     print "request: "+str(request)
+    print "json: %s"%(str(request.json))
+    print "form: %s"%(str(request.form))
+    print "values: %s"%(str(request.values))
+    print "data: %s"%(str(request.data))
     values = request.json
     # print "form %s"%(str(values))
     return webhook_handler(values)
