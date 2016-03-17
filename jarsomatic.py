@@ -43,6 +43,7 @@ def test_positive():
     d = os.path.join(app_home, "webhook_example_positive.txt")
     f = open(d)
     file_content = f.read()
+    file_content = json.loads(file_content)
     return webhook_handler(file_content)
 
 
@@ -51,6 +52,7 @@ def test_negative():
     d = os.path.join(app_home, "webhook_example_negative.txt")
     f = open(d)
     file_content = f.read()
+    file_content = json.loads(file_content)
     return webhook_handler(file_content)
 
 
@@ -58,26 +60,43 @@ def test_negative():
 def webhook():
     global repo_rel_dir
     repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
-    print "values <%s>\n\n"%(str(request.values))
-    try:
-        print "values of payload <%s>\n\n"%(str(request.values['payload']))
-    except:
-        pass
+    # print "values <%s>\n\n"%(str(request.values))
+    # try:
+    #     print "form: %s"%(str(request.form))
+    #     # print "values of payload <%s>\n\n"%(str(request.form['payload']))
+    #     # print "values of payload <%s>\n\n"%(str(request.values['payload']))
+    # except:
+    #     pass
     # print "data %s"%(str(request.data))
     # values = request.values['payload']
-    values = request.values
+    print "request: "+str(request)
+    values = request.json
+    # print "form %s"%(str(values))
     return webhook_handler(values)
 
 
-def webhook_handler(payload_text):
-    values = payload_text
+def webhook_handler(values):
+    # values are expected to be a dict
     try:
-        values = json.loads(str(values))
-        payload = values['payload']
+        # print '\n\n****  values ***'
+        # for v in values.values():
+        #     print "\n*** v: "+str(v)
+        # print '\n\n**** keys ***'
+        # for v in values.keys():
+        #     print "\n*** k: "+str(v)
+        # print '\n\n**** items ***'
+        # for v in values.items():
+        #     print "\n*** i: "+str(v)
+
+        # values = json.loads(str(values))
+        # payload = values['payload']
+        payload = values.get('payload')
+        print "payload %s"%(str(payload))
         # payload = values
     except Exception as e:
         print "exception: "+str(e)
-        return "exception occurred %s"%(str(values))
+        return "exception occurred \n"
+        #return "exception occurred %s"%(str(values))
     print "will get changed files from payload"
     changed_files = get_changed_files_from_payload(payload)
     print "will get the repo from payload"
