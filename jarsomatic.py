@@ -149,7 +149,7 @@ def create_pull_request(repo_str):
             p.edit(state="closed")
     print "deleted old pull requests"
     try:
-        repo.create_pull(head=username+':master', base='master', title=title, body=body)
+        repo.create_pull(head=username+':gh-pages', base='gh-pages', title=title, body=body)
         return True
     except Exception as e:
         print "cannot create pull request, error:  <%s>"%(str(e))
@@ -174,8 +174,8 @@ def update_fork(repo_str):
     global g
     repo = g.get_repo(repo_str)
     try:
-        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull %s ; git push "%(get_repo_abs_path(), repo.clone_url)
-        print "command: %s"%(comm)
+        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
+        print "update fork command: %s"%(comm)
         call(comm, shell=True)
     except Exception as e:
         print "error updating fork of repo %s, <%s>"%(repo_str, str(e))
@@ -183,6 +183,12 @@ def update_fork(repo_str):
 
 def delete_local_copy():
     comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
+    call(comm, shell=True)
+
+
+def switch_to_gh_pages():
+    comm = "cd %s ; git branch gh-pages ; git checkout gh-pages ;"%(get_repo_abs_path())
+    print "switch to gh-pages: %s"%(comm)
     call(comm, shell=True)
 
 
@@ -199,7 +205,8 @@ def run_if_target(changed_files, target_files, jar_command):
             break
     if found:
         print "Run"
-        comm = "cd "+os.path.join(temp_dir, repo_rel_dir, repo_name)+"; "  # Go to the project location
+        switch_to_gh_pages()
+        comm = "cd "+get_repo_abs_path()+"; "  # Go to the project location
         # Because we already get the fork
         # if not TEST:
         #     comm += "git pull; "  # get latest update
@@ -225,7 +232,7 @@ def remove_control_chars(s):
 def clone_repo(repo_url):
     repo_url_with_token =  "https://"+github_token+"@"+repo_url.strip()[8:]
     comm = "cd %s; mkdir %s ; cd %s; git clone %s"%(temp_dir, repo_rel_dir, repo_rel_dir, repo_url_with_token)
-    print "command: %s"%(comm)
+    print "clone repo command: %s"%(comm)
     call(comm, shell=True)
 
 
@@ -240,8 +247,8 @@ def copy_repo():
 
 
 def push_changes():
-    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ;  git add . ; git commit -m 'jarsomatic update' ; git push ;"%(get_repo_abs_path())
-    print "command: %s"%(comm)
+    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull origin gh-pages ; git add . ; git commit -m 'jarsomatic update' ; git push origin gh-pages ;"%(get_repo_abs_path())
+    print "push changes command: %s"%(comm)
     call(comm, shell=True)
 
 
