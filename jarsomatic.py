@@ -170,11 +170,32 @@ def fork_repo(repo_str):
         print "error forking the repo %s, <%s>"%(repo_str, str(e))
 
 
+def fork_cleanup():
+    import shutil
+    print "in fork cleanup"
+    print "abs path: %s"%(get_repo_abs_path())
+    for wo in os.walk(get_repo_abs_path()):
+        dirpath, dirnames, filenames = wo
+        break
+    print "os walk is performed"
+    for d in dirnames:
+        print "dir: %s"%(d)
+        if d.strip() != ".git":
+            shutil.rmtree(d)
+            print "delete: %s"%(d)
+    print "checking file names"
+    for f in filenames:
+        f_dir = os.path.join(dirpath, f)
+        print "file: %s"%(f_dir)
+        os.remove(f_dir)
+
+
 def update_fork(repo_str):
     global g
     repo = g.get_repo(repo_str)
     try:
-        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
+        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull --no-edit -s theirs %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
+        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git remote add upstream %s ; git pull --no-edit -s theirs upstream master ; git add . ; git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
         print "update fork command: %s"%(comm)
         call(comm, shell=True)
     except Exception as e:
@@ -247,7 +268,7 @@ def copy_repo():
 
 
 def push_changes():
-    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull origin gh-pages ; git add . ; git commit -m 'jarsomatic update' ; git push origin gh-pages ;"%(get_repo_abs_path())
+    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull -s ours --no-edit origin gh-pages; git add . ; git commit -m 'jarsomatic update' ; git push origin gh-pages ;"%(get_repo_abs_path())
     print "push changes command: %s"%(comm)
     call(comm, shell=True)
 
@@ -259,8 +280,9 @@ def workflow(changed_files, repo_str):
     else:
         print "forking the repo %s"%(repo_str)
         repo_url = fork_repo(repo_str)
-        print "cloning the repo"
+        print "cloning the repo %s"%(repo_url)
         clone_repo(repo_url)
+        #fork_cleanup()
         update_fork(repo_str)  # update from upstream as the cloned repo is an old fork due to Github limitation
     print "getting jar configurations"
     target_files, jar_command = get_jar_config(os.path.join(get_repo_abs_path(), 'jar.cfg'))
@@ -281,6 +303,7 @@ def workflow(changed_files, repo_str):
         print "not found"
     delete_local_copy()
     return msg
+
 
 
 def get_jar_config(config_file):
