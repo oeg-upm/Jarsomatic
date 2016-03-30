@@ -79,7 +79,17 @@ def webhook():
         print "exception: "+str(e)
     values = request.json
     # print "form %s"%(str(values))
-    return webhook_handler(values)
+    if values["ref"].strip() == "refs/heads/gh-pages":
+        return "gh-pages push will be ignored"
+    try:
+        pid = os.fork()
+        if pid==0:
+            webhook_handler(values)
+        else:
+            return "Process started to do the work"
+    except Exception as e:
+        return "Error forking the process: <%s>"%(str(e))
+    # return webhook_handler(values)
 
 
 def webhook_handler(payload):
