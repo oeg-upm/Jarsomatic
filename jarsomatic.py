@@ -13,6 +13,7 @@ import logging
 
 
 log_filename = 'jarsomatic.log'
+append_comm = " >> "+log_filename
 TEST = False
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
@@ -29,6 +30,8 @@ temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
 logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
 
+
+
 def dolog(msg):
     logging.critical(msg)
 
@@ -41,7 +44,8 @@ except Exception as e:
 
 @app.route("/pull")
 def pull_new_version():
-    comm = "cd %s; git pull --no-edit -Xtheirs origin master;"%(app_home)
+    comm = "cd %s; git pull --no-edit -Xtheirs origin master; "%(app_home)
+    comm+=append_comm
     dolog("will update Jarsomatic")
     dolog("Jarsomatic update command: "+comm)
     call(comm, shell=True)
@@ -256,6 +260,7 @@ def update_fork(repo_str):
     try:
         # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull --no-edit -Xtheirs %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
         comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git remote add upstream %s ; git pull --no-edit -Xtheirs upstream master ; git add . ; git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
+        comm += append_comm
         dolog("update fork command: %s"%(comm))
         call(comm, shell=True)
     except Exception as e:
@@ -269,6 +274,7 @@ def delete_local_copy():
 
 def switch_to_gh_pages():
     comm = "cd %s ; git branch gh-pages ; git checkout gh-pages ;"%(get_repo_abs_path())
+    comm += append_comm
     dolog("switch to gh-pages: %s"%(comm))
     call(comm, shell=True)
 
@@ -313,6 +319,7 @@ def remove_control_chars(s):
 def clone_repo(repo_url):
     repo_url_with_token =  "https://"+github_token+"@"+repo_url.strip()[8:]
     comm = "cd %s; mkdir %s ; cd %s; git clone %s"%(temp_dir, repo_rel_dir, repo_rel_dir, repo_url_with_token)
+    comm += append_comm
     dolog("clone repo command: %s"%(comm))
     call(comm, shell=True)
 
@@ -322,6 +329,7 @@ def copy_repo():
     comm = "mkdir %s"%(os.path.join(temp_dir, repo_rel_dir))
     # target is the repo name in the test webhook example so the example work
     comm += "; cp -R %s %s"%(os.path.join(temp_dir, 'source'), os.path.join(temp_dir, repo_rel_dir, 'target'))
+    comm += append_comm
     dolog("copy command: "+comm)
     call(comm, shell=True)
     dolog("command executed")
@@ -329,6 +337,7 @@ def copy_repo():
 
 def push_changes():
     comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull -Xours --no-edit origin gh-pages; git add . ; git commit -m 'jarsomatic update' ; git push origin gh-pages ;"%(get_repo_abs_path())
+    comm += append_comm
     dolog("push changes command: %s"%(comm))
     call(comm, shell=True)
 
