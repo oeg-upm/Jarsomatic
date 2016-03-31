@@ -41,7 +41,7 @@ except Exception as e:
 
 @app.route("/pull")
 def pull_new_version():
-    comm = "cd %s; git pull --no-edit -Xtheirs origin master;"
+    comm = "cd %s; git pull --no-edit -Xtheirs origin master;"%(app_home)
     dolog("will update Jarsomatic")
     dolog("Jarsomatic update command: "+comm)
     call(comm, shell=True)
@@ -57,10 +57,10 @@ def clearlog():
 
 @app.route("/getlog")
 def getlog():
-    s = ""
+    s = []
     with open(log_filename,"r") as f:
         for idx,l in enumerate(f):
-            s += "<tr><td>%d</td><td>%s</td></tr>" % (idx, l)
+            s.append("<tr><td>%d</td><td>%s</td></tr>" % (idx, l))
     return """<html><head>
                     <style>
                             table, th, td {
@@ -79,7 +79,7 @@ def getlog():
                         </tr>
                         %s
                         </table></body>
-                    </html>""" % s
+                    </html>""" % "".join(s[::-1])
 
 
 @app.route("/")
