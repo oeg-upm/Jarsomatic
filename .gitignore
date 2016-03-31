@@ -1,4 +1,5 @@
 #Jarsomatic Configuration Files
+jarsomatic.log
 jarsomatic.cfg
 jarsomatic.wsgi
 jar.cfg
