@@ -43,6 +43,7 @@ except Exception as e:
 def pull_new_version():
     comm = "cd %s; git pull --no-edit -Xtheirs origin master;"
     dolog("will update Jarsomatic")
+    dolog("Jarsomatic update command: "+comm)
     call(comm, shell=True)
     return getlog()
 
