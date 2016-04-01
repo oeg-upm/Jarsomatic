@@ -15,7 +15,7 @@ import time
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
 app = Flask(__name__)
-app_home = os.path.dirname( os.path.abspath(__file__))
+app_home = os.path.dirname(os.path.abspath(__file__))
 log_filename = 'jarsomatic.log'
 append_comm = " >> "+os.path.join(app_home, log_filename)
 config_file = 'jarsomatic.cfg'
@@ -28,7 +28,7 @@ github_token = config.get('GITHUB', 'token')
 temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
 # logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
-logging.basicConfig(filename=log_filename, format='%(asctime)s: %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename=os.path.join(app_home, log_filename), format='%(asctime)s: %(message)s', level=logging.DEBUG)
 
 def dolog(msg):
     logging.critical(msg)
