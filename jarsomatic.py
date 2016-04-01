@@ -375,7 +375,7 @@ def workflow(changed_files, repo_str):
             msg += " And pull request failed to be created"
     else:
         dolog("not found")
-    delete_local_copy()
+    # delete_local_copy()
     return msg
 
 
