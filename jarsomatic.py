@@ -271,7 +271,7 @@ def update_fork(repo_str):
     try:
         # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull --no-edit -Xtheirs %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
         # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git remote add upstream %s ; git pull --no-edit -Xtheirs upstream master ; git add . ; git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
-        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git remote add upstream %s ; git reset --hard upstream/master ; git add . ; git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
+        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git remote add upstream %s ; git pull upstream master ; git reset --hard upstream/master ; git add . ; git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
         comm += append_comm
         dolog("update fork command: %s"%(comm))
         call(comm, shell=True)
