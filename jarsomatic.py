@@ -61,7 +61,7 @@ def clearlog():
 @app.route("/getlog")
 def getlog():
     s = []
-    with open(os.path.join(app_home), "r") as f:
+    with open(os.path.join(app_home, log_filename), "r") as f:
         for idx,l in enumerate(f):
             s.append("<tr><td>%d</td><td>%s</td></tr>" % (idx, l))
     return """<html><head>
