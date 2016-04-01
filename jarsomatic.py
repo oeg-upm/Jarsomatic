@@ -41,7 +41,7 @@ except Exception as e:
 
 @app.route("/pull")
 def pull_new_version():
-    comm = "cd %s; git pull --no-edit -Xtheirs origin master; "%(app_home)
+    comm = "cd %s; git pull --no-edit -Xtheirs origin master "%(app_home)
     comm+=append_comm
     dolog("will update Jarsomatic")
     dolog("Jarsomatic update command: "+comm)
