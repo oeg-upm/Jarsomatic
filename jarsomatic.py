@@ -348,7 +348,7 @@ def copy_repo():
 
 
 def push_changes():
-    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git add . ; git commit -m 'jarsomatic update p' ; git push -f origin gh-pages "%(get_repo_abs_path())
+    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull -s ours --no-edit git add . ; git commit -m 'jarsomatic update p' ; git push -f origin gh-pages "%(get_repo_abs_path())
     comm += append_comm
     dolog("push changes command: %s"%(comm))
     call(comm, shell=True)
