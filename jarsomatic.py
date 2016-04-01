@@ -10,6 +10,7 @@ import random
 import string
 from github import Github
 import logging
+import time
 
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
@@ -140,6 +141,7 @@ def webhook():
     try:
         pid = os.fork()
         if pid==0:
+            time.sleep(10)
             return webhook_handler(values)
         else:
             return "Process started to do the work"
