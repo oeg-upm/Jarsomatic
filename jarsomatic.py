@@ -11,15 +11,12 @@ import string
 from github import Github
 import logging
 
-
-log_filename = 'jarsomatic.log'
-append_comm = " >> "+log_filename
-# append_comm = ""
-TEST = False
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
 app = Flask(__name__)
 app_home = os.path.dirname( os.path.abspath(__file__))
+log_filename = 'jarsomatic.log'
+append_comm = " >> "+os.path.join(app_home, log_filename)
 config_file = 'jarsomatic.cfg'
 config = ConfigParser.ConfigParser()
 if not os.path.isfile(os.path.join(app_home, config_file)):
@@ -29,8 +26,8 @@ config.read(os.path.join(app_home, config_file))
 github_token = config.get('GITHUB', 'token')
 temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
-logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
-
+# logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename=log_filename, format='%(asctime)s: %(message)s', level=logging.DEBUG)
 
 def dolog(msg):
     logging.critical(msg)
@@ -348,16 +345,13 @@ def push_changes():
 
 
 def workflow(changed_files, repo_str):
-    if TEST:
-        print "coping the source repo"
-        copy_repo()
-    else:
-        dolog("forking the repo %s"%(repo_str))
-        repo_url = fork_repo(repo_str)
-        dolog("cloning the repo %s"%(repo_url))
-        clone_repo(repo_url)
-        #fork_cleanup()
-        update_fork(repo_str)  # update from upstream as the cloned repo is an old fork due to Github limitation
+
+    dolog("forking the repo %s"%(repo_str))
+    repo_url = fork_repo(repo_str)
+    dolog("cloning the repo %s"%(repo_url))
+    clone_repo(repo_url)
+    #fork_cleanup()
+    update_fork(repo_str)  # update from upstream as the cloned repo is an old fork due to Github limitation
     dolog("getting jar configurations")
     target_files, jar_command = get_jar_config(os.path.join(get_repo_abs_path(), 'jar.cfg'))
     if target_files is None or jar_command is None:
