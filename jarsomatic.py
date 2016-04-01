@@ -221,7 +221,13 @@ def create_pull_request(repo_str):
         repo.create_pull(head=username+':gh-pages', base='gh-pages', title=title, body=body)
         return True
     except Exception as e:
-        dolog("cannot create pull request, error:  <%s>"%(str(e)))
+        dolog("cannot create pull request, will try again. the was error:  <%s>"%(str(e)))
+        time.sleep(20)
+        try:
+            repo.create_pull(head=username+':gh-pages', base='gh-pages', title=title, body=body)
+            return True
+        except Exception as e:
+            dolog("still cannot create pull request. error:  <%s>"%(str(e)))
         return False
 
 
