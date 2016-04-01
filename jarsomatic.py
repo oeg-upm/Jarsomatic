@@ -77,7 +77,7 @@ def getlog():
                     </head>
                     <body>
                         <br><br>
-                        <a href="/clearlog">clear logs</a><br>
+                        <a href="clearlog">clear logs</a><br>
                         <table>
 
                         <tr>
