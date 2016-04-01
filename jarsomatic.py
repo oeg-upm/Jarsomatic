@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 import ConfigParser
 # import json
 # import simplejson as json
@@ -14,6 +14,7 @@ import logging
 
 log_filename = 'jarsomatic.log'
 append_comm = " >> "+log_filename
+# append_comm = ""
 TEST = False
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
@@ -31,10 +32,9 @@ g = Github(github_token)
 logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
 
 
-
 def dolog(msg):
     logging.critical(msg)
-
+    # print msg
 try:
     u = g.get_user().login
     dolog("user %s, token %s"%(u, github_token))
@@ -49,14 +49,14 @@ def pull_new_version():
     dolog("will update Jarsomatic")
     dolog("Jarsomatic update command: "+comm)
     call(comm, shell=True)
-    return getlog()
+    return redirect(url_for('getlog'))
 
 
 @app.route("/clearlog")
 def clearlog():
     f = open(log_filename, "w")
     f.close()
-    return "log file cleared successfully"
+    return redirect(url_for('getlog'))
 
 
 @app.route("/getlog")
@@ -76,7 +76,11 @@ def getlog():
                         }
                     </style>
                     </head>
-                    <body><table>
+                    <body>
+                        <br><br>
+                        <a href="/clearlog">clear logs</a><br>
+                        <table>
+
                         <tr>
                             <td>Line</td>
                             <td>Log</td>
@@ -88,8 +92,9 @@ def getlog():
 
 @app.route("/")
 def hello():
-    return "Welcome to Jarsomatic" + "<br><br><a href='testp'>Test Positive</a>" + \
-           "<br><br><a href='testn'>Test Negative</a>"
+    return "Welcome to Jarsomatic" + "<br><br><a href='getlog'>see logs</a>"
+           #"<br><br><a href='testp'>Test Positive</a>" + \
+           #"<br><br><a href='testn'>Test Negative</a>"
 
 
 @app.route("/testp", methods=["GET"])
@@ -138,7 +143,7 @@ def webhook():
     try:
         pid = os.fork()
         if pid==0:
-            webhook_handler(values)
+            return webhook_handler(values)
         else:
             return "Process started to do the work"
     except Exception as e:
@@ -355,6 +360,10 @@ def workflow(changed_files, repo_str):
         update_fork(repo_str)  # update from upstream as the cloned repo is an old fork due to Github limitation
     dolog("getting jar configurations")
     target_files, jar_command = get_jar_config(os.path.join(get_repo_abs_path(), 'jar.cfg'))
+    if target_files is None or jar_command is None:
+        dolog("get jar config failed")
+        delete_local_copy()
+        return "get jar config failed"
     dolog("running if target")
     is_found, msg = run_if_target(changed_files, target_files, jar_command)
     dolog("after running")
@@ -374,17 +383,21 @@ def workflow(changed_files, repo_str):
     return msg
 
 
-
 def get_jar_config(config_file):
     dolog("looking for: %s"%(config_file))
     confi = ConfigParser.ConfigParser()
     if not os.path.isfile(config_file):
         dolog("\n*** The file: "+config_file+" is not here or is not accessible ***\n")
     dolog("read the file")
-    confi.read(config_file)
+    try:
+        confi.read(config_file)
+    except Exception as e:
+        dolog("Cannot read jar configuration file: %s"%(config_file))
+        dolog("Exception: %s"%(str(e)))
+        return None, None
     dolog("getting the command")
     jar_command = confi.get('DEFAULT', 'command')
-    dolog("jar_command %s"%jar_command)
+    dolog("jar_command: %s"%jar_command)
     dolog("target files")
     target_files_str = confi.get('DEFAULT', 'watch')
     dolog("watch")
