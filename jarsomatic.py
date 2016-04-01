@@ -52,7 +52,8 @@ def pull_new_version():
 
 @app.route("/clearlog")
 def clearlog():
-    f = open(log_filename, "w")
+    # f = open(log_filename, "w")
+    f = open(os.path.join(app_home, log_filename), "w")
     f.close()
     return redirect(url_for('getlog'))
 
