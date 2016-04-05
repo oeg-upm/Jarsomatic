@@ -9,6 +9,20 @@ Collaborators: Daniel Garijo (@dgarijo), Ahmad Alobaid
 ![Image](../master/Jarsomatic Diagram.png?raw=true)
 
 
+##How to use it
+1. Add the url of the webhook.
+2. Add jar.cfg.
+3. After that, when ever you do a push to the master branch, if one of files you are watching is changed, then it will
+be triggered and the command you specified will be called.
+
+
+###JAR Configuration file:
+There should a configuration file per monitored JAR (should be named jar.cfg)
+```
+[DEFAULT]
+watch: "dir1/file1.owl", dir2/file2.csv
+command: ls
+```
 
 
 ###Jarsomatic Configuration file:
@@ -23,13 +37,6 @@ token: xxxxxxxxxxxxxxxxxx
 
 ```
 
-###JAR Configuration file:
-There should a configuration file per monitored JAR (should be named jar.cfg)
-```
-[DEFAULT]
-watch: "dir1/file1.owl", dir2/file2.csv
-command: ls
-```
 
 ###Automatic deployment with Jarsomatic
 To do so, the recommended way is to use access token
