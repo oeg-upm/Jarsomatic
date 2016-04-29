@@ -1,5 +1,7 @@
-from flask import Flask, request, redirect, url_for
 import ConfigParser
+
+from flask import Flask, request, redirect, url_for, render_template
+
 # import json
 # import simplejson as json
 import rson as json
@@ -12,6 +14,13 @@ from github import Github
 import logging
 import time
 
+from datetime import datetime
+
+from models import Repo
+from mongoengine import connect
+
+current_repo = None
+current_user = None
 repo_name = None  # set in get_repo_from_payload
 repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
 app = Flask(__name__)
@@ -22,13 +31,14 @@ config_file = 'jarsomatic.cfg'
 config = ConfigParser.ConfigParser()
 if not os.path.isfile(os.path.join(app_home, config_file)):
     print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
-
 config.read(os.path.join(app_home, config_file))
 github_token = config.get('GITHUB', 'token')
 temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
 # logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
 logging.basicConfig(filename=os.path.join(app_home, log_filename), format='%(asctime)s: %(message)s', level=logging.DEBUG)
+connect("jarsomatic")
+
 
 def dolog(msg):
     logging.critical(msg)
@@ -38,6 +48,14 @@ try:
     dolog("user %s, token %s"%(u, github_token))
 except Exception as e:
     dolog("Github token is invalid")
+
+
+@app.route("/")
+def hello():
+    return render_template('home.html', repos=[r.json() for r in Repo.objects.all()])
+    #return "Welcome to Jarsomatic" + "<br><br><a href='getlog'>see logs</a>"
+           #"<br><br><a href='testp'>Test Positive</a>" + \
+           #"<br><br><a href='testn'>Test Negative</a>"
 
 
 @app.route("/pull")
@@ -89,13 +107,6 @@ def getlog():
                     </html>""" % "".join(s[::-1])
 
 
-@app.route("/")
-def hello():
-    return "Welcome to Jarsomatic" + "<br><br><a href='getlog'>see logs</a>"
-           #"<br><br><a href='testp'>Test Positive</a>" + \
-           #"<br><br><a href='testn'>Test Negative</a>"
-
-
 @app.route("/testp", methods=["GET"])
 def test_positive():
     d = os.path.join(app_home, "webhook_example_positive_nopayload.txt")
@@ -141,7 +152,7 @@ def webhook():
         return "gh-pages push will be ignored"
     try:
         pid = os.fork()
-        if pid==0:
+        if pid == 0:
             time.sleep(10)
             return webhook_handler(values)
         else:
@@ -163,16 +174,15 @@ def webhook_handler(payload):
         # print '\n\n**** items ***'
         # for v in values.items():
         #     print "\n*** i: "+str(v)
-
         # values = json.loads(str(values))
         # payload = values['payload']
-        #payload = values.get('payload')
+        # payload = values.get('payload')
         print "payload %s"%(str(payload))
         # payload = values
     except Exception as e:
         dolog("exception: "+str(e))
         return "exception occurred \n"
-        #return "exception occurred %s"%(str(values))
+        # return "exception occurred %s"%(str(values))
     dolog("will get changed files from payload")
     changed_files = get_changed_files_from_payload(payload)
     dolog("will get the repo from payload")
@@ -187,6 +197,8 @@ def get_changed_files_from_commit(commit):
 
 
 def get_changed_files_from_payload(payload):
+    global current_user
+    current_user = payload["head_commit"]["committer"]["name"]
     commits = payload['commits']
     changed_files = []
     for c in commits:
@@ -337,7 +349,6 @@ def clone_repo(repo_url):
 
 
 def copy_repo():
-
     comm = "mkdir %s"%(os.path.join(temp_dir, repo_rel_dir))
     # target is the repo name in the test webhook example so the example work
     comm += "; cp -R %s %s"%(os.path.join(temp_dir, 'source'), os.path.join(temp_dir, repo_rel_dir, 'target'))
@@ -354,33 +365,57 @@ def push_changes():
     call(comm, shell=True)
 
 
+def change_status(new_status=None, new_progress=None):
+    global current_repo
+    if new_status is not None:
+        current_repo.status = new_status
+    if new_progress is not None:
+        current_repo.progress = new_progress
+    current_repo.save()
+
+
 def workflow(changed_files, repo_str):
+    global current_repo, current_user
+    current_repo = Repo(name=repo_str, user=current_user, status="starting", started_at=datetime.now(), progress=10)
+    current_repo.save()
     dolog("forking the repo %s"%(repo_str))
+    change_status("forking", 20)
     repo_url = fork_repo(repo_str)
     dolog("cloning the repo %s"%(repo_url))
+    change_status("cloning", 30)
     clone_repo(repo_url)
-    #fork_cleanup()
+    # fork_cleanup()
+    change_status("updating the fork", 40)
     update_fork(repo_str)  # update from upstream as the cloned repo is an old fork due to Github limitation
     dolog("getting jar configurations")
+    change_status("getting configurations", 50)
     target_files, jar_command = get_jar_config(os.path.join(get_repo_abs_path(), 'jar.cfg'))
     if target_files is None or jar_command is None:
         dolog("get jar config failed")
+        change_status("Error getting configurations", 100)
         delete_local_copy()
         return "get jar config failed"
+    else:
+        change_status("configuration parsed", 60)
     dolog("running if target")
+    change_status("running if target", 70)
     is_found, msg = run_if_target(changed_files, target_files, jar_command)
     dolog("after running")
     if is_found:
         dolog("is found")
+        change_status("pushing changes", 80)
         push_changes()
         dolog("after push changes")
+        dolog("creating pull request", 90)
         if create_pull_request(repo_str):
             dolog("pull request is True")
+            dolog("pull request created", 100)
             msg += " And pull request is created"
         else:
             dolog("pull request is False")
             msg += " And pull request failed to be created"
     else:
+        change_status("not found", 100)
         dolog("not found")
     # delete_local_copy()
     return msg
@@ -413,5 +448,6 @@ def get_repo_abs_path():
     return os.path.join(temp_dir, repo_rel_dir, repo_name)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
+    #app.run()
 

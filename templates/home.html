@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="col-md-8 col-md-offset-2">
+        <a class="btn btn-primary" href='getlog'>see logs</a>
+        <br>
+        <table class="table">
+            <tr>
+                <td>Repo</td>
+                <td>User</td>
+                <td>Progress</td>
+                <td>Status</td>
+                <td>Started</td>
+                <td>Completed</td>
+            </tr>
+            {%for r in repos%}
+            <tr>
+                <td>{{r.name}}</td>
+                <td>{{r.user}}</td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar"
+                             aria-valuenow="{{r.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{r.progress}}%">
+                            {{r.progress}}%
+                        </div>
+                    </div>
+                </td>
+                <td>{{r.status}}</td>
+                <td>{{r.started_at}}</td>
+                <td>{{r.completed_at}}</td>
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+</div>
+</body>
+</html>
