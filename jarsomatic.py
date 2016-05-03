@@ -283,9 +283,15 @@ def update_fork(repo_str):
     global g
     repo = g.get_repo(repo_str)
     try:
-        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull --no-edit -Xtheirs %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
-        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git remote add upstream %s ; git pull --no-edit -Xtheirs upstream master ; git add . ; git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
-        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git remote add upstream %s ; git pull upstream master ; git reset --hard upstream/master ; git add . ; git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
+        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic'
+        #  ; git branch ; git pull --no-edit -Xtheirs %s ; git add . ; git commit -m 'Jarsomatic update' ;
+        #  git push "%(get_repo_abs_path(), repo.clone_url)
+        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic'
+        #  ; git branch ; git remote add upstream %s ; git pull --no-edit -Xtheirs upstream master ; git add . ;
+        # git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
+        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic'
+        #  ; git remote add upstream %s ; git pull upstream master ; git reset --hard upstream/master ; git add . ;
+        # git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
 
         comm = "cd %s ; " \
                "git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; " \
@@ -371,7 +377,13 @@ def copy_repo():
 
 
 def push_changes():
-    comm = "cd %s; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git pull -s ours --no-edit upstream gh-pages; git add . ; git commit -m 'jarsomatic update p' ; git push -f origin gh-pages "%(get_repo_abs_path())
+    comm = "cd %s;" \
+           "git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; " \
+           "git config user.name 'Jarsomatic' ; " \
+           "git pull -s ours --no-edit upstream gh-pages ; " \
+           "git add . ; " \
+           "git commit -m 'jarsomatic update p' ; " \
+           "git push -f origin gh-pages "%(get_repo_abs_path())
     comm += append_comm
     dolog("push changes command: %s"%(comm))
     call(comm, shell=True)
