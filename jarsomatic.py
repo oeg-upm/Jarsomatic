@@ -345,8 +345,8 @@ def run_if_target(changed_files, target_files, jar_command):
         # call(comm, shell=True)
         return found, "Run: "+comm
     else:
-        #comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
-        #call(comm, shell=True)
+        # comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
+        # call(comm, shell=True)
         dolog("Ignore")
         return found, "Ignore"
 
@@ -359,7 +359,7 @@ def remove_control_chars(s):
 
 
 def clone_repo(repo_url):
-    repo_url_with_token =  "https://"+github_token+"@"+repo_url.strip()[8:]
+    repo_url_with_token = "https://"+github_token+"@"+repo_url.strip()[8:]
     comm = "cd %s; mkdir %s ; cd %s; git clone %s"%(temp_dir, repo_rel_dir, repo_rel_dir, repo_url_with_token)
     comm += append_comm
     dolog("clone repo command: %s"%(comm))
@@ -429,19 +429,25 @@ def workflow(changed_files, repo_str):
         dolog("is found")
         change_status("pushing changes", 80)
         push_changes()
-        dolog("after push changes")
+        dolog("after pushing the changes")
         change_status("creating pull request", 90)
         if create_pull_request(repo_str):
             dolog("pull request is True")
             change_status("pull request created", 100)
+            current_repo.completed_at = datetime.now()
+            current_repo.save()
             msg += " And pull request is created"
         else:
             dolog("pull request is False")
             change_status("pull failed to be created", 100)
+            current_repo.completed_at = datetime.now()
+            current_repo.save()
             msg += " And pull request failed to be created"
     else:
         change_status("not found", 100)
         dolog("not found")
+        current_repo.completed_at = datetime.now()
+        current_repo.save()
     # delete_local_copy()
     return msg
 
