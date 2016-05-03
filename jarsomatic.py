@@ -53,7 +53,7 @@ except Exception as e:
 
 @app.route("/")
 def hello():
-    return render_template('home.html', repos=[r.json() for r in Repo.objects.all()])
+    return render_template('home.html', repos=[r.json() for r in Repo.objects.all().order_by('-started_at')])
     #return "Welcome to Jarsomatic" + "<br><br><a href='getlog'>see logs</a>"
            #"<br><br><a href='testp'>Test Positive</a>" + \
            #"<br><br><a href='testn'>Test Negative</a>"
