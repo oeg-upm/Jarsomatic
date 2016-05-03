@@ -36,7 +36,8 @@ github_token = config.get('GITHUB', 'token')
 temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
 # logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
-logging.basicConfig(filename=os.path.join(app_home, log_filename), format='%(asctime)s: %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename=os.path.join(app_home, log_filename), format='%(asctime)s: %(message)s',
+                    level=logging.DEBUG)
 connect("jarsomatic")
 
 
@@ -284,7 +285,17 @@ def update_fork(repo_str):
     try:
         # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git pull --no-edit -Xtheirs %s ; git add . ; git commit -m 'Jarsomatic update' ; git push "%(get_repo_abs_path(), repo.clone_url)
         # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git branch ; git remote add upstream %s ; git pull --no-edit -Xtheirs upstream master ; git add . ; git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
-        comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git remote add upstream %s ; git pull upstream master ; git reset --hard upstream/master ; git add . ; git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
+        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic' ; git remote add upstream %s ; git pull upstream master ; git reset --hard upstream/master ; git add . ; git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
+
+        comm = "cd %s ; " \
+               "git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; " \
+               "git config user.name 'Jarsomatic' ; " \
+               "git remote add upstream %s ; " \
+               "git pull upstream master ; " \
+               "git reset --hard upstream/master ; " \
+               "git add . ; " \
+               "git commit -m 'Jarsomatic update h' ; " \
+               "git push -f origin master " % (get_repo_abs_path(), repo.clone_url)
         comm += append_comm
         dolog("update fork command: %s"%(comm))
         call(comm, shell=True)
@@ -306,7 +317,7 @@ def switch_to_gh_pages():
 
 def run_if_target(changed_files, target_files, jar_command):
     jarsomatic_branch = "jarsomatic"
-    dolog("found %d files"%(len(changed_files)))
+    dolog("found %d files" % (len(changed_files)))
     found = False
     for f in changed_files:
         for t in target_files:
@@ -324,8 +335,8 @@ def run_if_target(changed_files, target_files, jar_command):
         #     comm += "git pull; "  # get latest update
         comm += jar_command  # run the command and generate the output
         call(comm, shell=True)
-        #comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
-        #call(comm, shell=True)
+        # comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
+        # call(comm, shell=True)
         return found, "Run: "+comm
     else:
         #comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
