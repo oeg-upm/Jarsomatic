@@ -80,7 +80,7 @@ def clearlog():
 def getlog():
     s = []
     with open(os.path.join(app_home, log_filename), "r") as f:
-        for idx,l in enumerate(f):
+        for idx, l in enumerate(f):
             s.append("<tr><td>%d</td><td>%s</td></tr>" % (idx, l))
     return """<html><head>
                     <style>
@@ -95,6 +95,7 @@ def getlog():
                     </head>
                     <body>
                         <br><br>
+                        <a href="/">Home</a><br><br>
                         <a href="clearlog">clear logs</a><br>
                         <table>
 
@@ -406,13 +407,14 @@ def workflow(changed_files, repo_str):
         change_status("pushing changes", 80)
         push_changes()
         dolog("after push changes")
-        dolog("creating pull request", 90)
+        change_status("creating pull request", 90)
         if create_pull_request(repo_str):
             dolog("pull request is True")
-            dolog("pull request created", 100)
+            change_status("pull request created", 100)
             msg += " And pull request is created"
         else:
             dolog("pull request is False")
+            change_status("pull failed to be created", 100)
             msg += " And pull request failed to be created"
     else:
         change_status("not found", 100)
