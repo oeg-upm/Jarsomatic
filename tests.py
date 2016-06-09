@@ -27,7 +27,7 @@ class IntegrationTest(unittest.TestCase):
         start_time = datetime.datetime.now()
         comm = 'cd %s; git clone %s ' % (abs_tests_dir, clone_url)
         call(comm, shell=True)
-        f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'))
+        f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'),'w')
         f.write('')
         f.close()
         comm = 'cd %s; git push origin master ' % abs_tests_dir
@@ -43,7 +43,7 @@ class IntegrationTest(unittest.TestCase):
         # f.write('')
         # f.close()
         # sleep(5)
-        
+
 
     def tearDown(self):
         pass
