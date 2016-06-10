@@ -9,7 +9,7 @@ from mongoengine import connect
 from models import Repo
 
 abs_tests_dir = '/home/ahmad/tests'
-clone_url = 'git@github.com:ahmad88me/vocabUpdates.git'
+clone_url = 'git@github.com:ahmad88me/jarsomatic-vocab-test.git'
 test_folder = clone_url.split('/')[-1][:-4]
 repo = clone_url.split(':')[1][:-4]
 print 'test folder: %s' % test_folder
