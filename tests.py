@@ -3,6 +3,7 @@ import os
 from subprocess import call
 import datetime
 from time import sleep
+import ConfigParser
 
 from mongoengine import connect
 
@@ -35,6 +36,13 @@ class IntegrationTest(unittest.TestCase):
             return
         start_time = datetime.datetime.now()
         print 'start time: '+str(start_time)
+        config_file = 'jarsomatic.cfg'
+        config = ConfigParser.ConfigParser()
+        if not os.path.isfile(os.path.join(app_home, config_file)):
+            print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
+        config.read(os.path.join(app_home, config_file))
+        github_token = config.get('GITHUB', 'token')
+
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
         print "cloning command: "+comm
         call(comm, shell=True)
@@ -91,7 +99,6 @@ class IntegrationTest(unittest.TestCase):
             sleep(5)
             latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print latest_repo.progress
-
 
 
 if __name__ == '__main__':

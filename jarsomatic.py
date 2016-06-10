@@ -399,6 +399,13 @@ def change_status(new_status=None, new_progress=None):
     current_repo.save()
 
 
+def delete_forked_repo(repo_str):
+    comm = 'curl -H "Content-Type: application/json" -H "Authorization: token %s" ' % github_token
+    comm += '-X DELETE  https://api.github.com/repos/jarsomatic/%s' % repo_str.split('/')[1].strip()
+    dolog("deleting the fork: "+repo_str)
+    call(comm, shell=True)
+
+
 def workflow(changed_files, repo_str):
     global current_repo, current_user
     current_repo = Repo(name=repo_str, user=current_user, status="starting", started_at=datetime.now(), progress=10)
