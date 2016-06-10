@@ -54,14 +54,11 @@ class IntegrationTest(unittest.TestCase):
                 print latest_repo.started_at
                 sleep(5)
         print 'preparation is done'
-        # comm = 'cd %s; git checkout -b origin/gh-pages gh-pages ;' % abs_tests_dir
-        # call(comm, shell=True)  # clone the testing repo
-        # f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'))
-        # f.write('')
-        # f.close()
-        # sleep(5)
 
     def tearDown(self):
+        pass
+
+    def test_1(self):
         pass
 
     # def test_vocab_3_repos(self):
