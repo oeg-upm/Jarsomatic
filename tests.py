@@ -25,9 +25,9 @@ class IntegrationTest(unittest.TestCase):
         :return:
         """
         start_time = datetime.datetime.now()
-        comm = 'cd %s; git clone %s ' % (abs_tests_dir, clone_url)
+        comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
         call(comm, shell=True)
-        f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'),'w')
+        f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'), 'w')
         f.write('')
         f.close()
         comm = 'cd %s; git push origin master ' % abs_tests_dir
