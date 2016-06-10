@@ -31,7 +31,7 @@ class IntegrationTest(unittest.TestCase):
         f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'), 'w')
         f.write('')
         f.close()
-        comm = 'cd %s; git push origin master ' % abs_tests_dir
+        comm = 'cd %s; git push origin master ' % os.path.join(abs_tests_dir, test_folder)
         print "cleaning command: "+comm
         call(comm, shell=True)
         while(Repo.objects.all().order_by('-started_at')[0].started_at < start_time):
