@@ -75,6 +75,8 @@ class IntegrationTest(unittest.TestCase):
         f.write(s)
         f.close()
         comm = "cd %s ; git add .; git commit -m 'automated test 3'; git push;" % (os.path.join(abs_tests_dir, test_folder))
+        # print 'pushing new vocabularies: '+comm
+        call(comm, shell=True)
         found = False
         for i in xrange(5):
             latest_repo = Repo.objects.all().order_by('-started_at')[0]
