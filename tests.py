@@ -39,6 +39,7 @@ class IntegrationTest(unittest.TestCase):
             print 'keep waiting...'
             print latest_repo.started_time
             sleep(5)
+        print 'preparation is done'
         # comm = 'cd %s; git checkout -b origin/gh-pages gh-pages ;' % abs_tests_dir
         # call(comm, shell=True)  # clone the testing repo
         # f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'))
