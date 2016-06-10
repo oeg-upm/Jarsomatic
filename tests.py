@@ -39,11 +39,12 @@ class IntegrationTest(unittest.TestCase):
         comm = 'cd %s; git push origin master ' % os.path.join(abs_tests_dir, test_folder)
         print "cleaning command: "+comm
         call(comm, shell=True)
-        while(Repo.objects.all().order_by('-started_at')[0].started_at < start_time):
-            latest_repo = Repo.objects.all().order_by('-started_at')[0]
-            print 'keep waiting...'
-            print latest_repo.started_at
-            sleep(5)
+        for i in range(10):
+            if Repo.objects.all().order_by('-started_at')[0].started_at >= start_time:
+                latest_repo = Repo.objects.all().order_by('-started_at')[0]
+                print 'keep waiting...'
+                print latest_repo.started_at
+                sleep(5)
         print 'preparation is done'
         # comm = 'cd %s; git checkout -b origin/gh-pages gh-pages ;' % abs_tests_dir
         # call(comm, shell=True)  # clone the testing repo
