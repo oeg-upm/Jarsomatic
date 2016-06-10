@@ -29,6 +29,7 @@ class IntegrationTest(unittest.TestCase):
         :return:
         """
         start_time = datetime.datetime.now()
+        print 'start time: '+str(start_time)
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
         print "cloning command: "+comm
         call(comm, shell=True)
@@ -39,7 +40,7 @@ class IntegrationTest(unittest.TestCase):
         print "cleaning command: "+comm
         call(comm, shell=True)
         while(Repo.objects.all().order_by('-started_at')[0].started_at < start_time):
-            latest_repo = Repo.objects.all().order_by('started_at')[0]
+            latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print 'keep waiting...'
             print latest_repo.started_at
             sleep(5)
