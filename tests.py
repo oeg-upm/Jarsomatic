@@ -44,7 +44,9 @@ class IntegrationTest(unittest.TestCase):
             print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
         config.read(os.path.join(app_home, config_file))
         github_token = config.get('GITHUB', 'token')
-
+        comm = "git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
+        comm += "git config user.name 'Test' ; "
+        call(comm, shell=True)
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
         print "cloning command: "+comm
         call(comm, shell=True)
