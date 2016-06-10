@@ -26,11 +26,13 @@ class IntegrationTest(unittest.TestCase):
         """
         start_time = datetime.datetime.now()
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
+        print "cloning command: "+comm
         call(comm, shell=True)
         f = open(os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv'), 'w')
         f.write('')
         f.close()
         comm = 'cd %s; git push origin master ' % abs_tests_dir
+        print "cleaning command: "+comm
         call(comm, shell=True)
         while(Repo.objects.all().order_by('-started_at')[0].started_at < start_time):
             latest_repo = Repo.objects.all().order_by('started_at')[0]
