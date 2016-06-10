@@ -445,6 +445,7 @@ def workflow(changed_files, repo_str):
             current_repo.completed_at = datetime.now()
             current_repo.save()
             msg += " And pull request is created"
+            dolog("deleting the forked repo attempt")
             delete_forked_repo(repo_str)
         else:
             dolog("pull request is False")
