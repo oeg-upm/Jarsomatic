@@ -89,6 +89,7 @@ class IntegrationTest(unittest.TestCase):
         print latest_repo.name
         while latest_repo.progress != 100:
             sleep(5)
+            latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print latest_repo.progress
 
 
