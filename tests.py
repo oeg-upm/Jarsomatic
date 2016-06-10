@@ -2,8 +2,11 @@ import unittest
 import os
 from subprocess import call
 import datetime
-from models import Repo
 from time import sleep
+
+from mongoengine import connect
+
+from models import Repo
 
 abs_tests_dir = '/home/ahmad/tests'
 clone_url = 'git@github.com:ahmad88me/vocabUpdates.git'
@@ -12,6 +15,7 @@ repo = clone_url.split(':')[1][:-4]
 print 'test folder: %s' % test_folder
 print 'repo %s ' % repo
 
+connect("jarsomatic")
 
 class IntegrationTest(unittest.TestCase):
 
