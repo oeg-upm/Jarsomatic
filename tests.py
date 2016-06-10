@@ -18,6 +18,7 @@ print 'repo %s ' % repo
 connect("jarsomatic")
 start_setup = False
 
+
 class IntegrationTest(unittest.TestCase):
 
     vocabularies_abs_dir = os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv')
