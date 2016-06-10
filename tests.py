@@ -38,6 +38,7 @@ class IntegrationTest(unittest.TestCase):
         print 'start time: '+str(start_time)
         config_file = 'jarsomatic.cfg'
         config = ConfigParser.ConfigParser()
+        app_home = os.path.dirname(os.path.abspath(__file__))
         if not os.path.isfile(os.path.join(app_home, config_file)):
             print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
         config.read(os.path.join(app_home, config_file))
