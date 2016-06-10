@@ -41,6 +41,8 @@ class IntegrationTest(unittest.TestCase):
         call(comm, shell=True)
         for i in range(10):
             if Repo.objects.all().order_by('-started_at')[0].started_at >= start_time:
+                break
+            else:
                 latest_repo = Repo.objects.all().order_by('-started_at')[0]
                 print 'keep waiting...'
                 print latest_repo.started_at
