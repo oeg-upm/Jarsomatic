@@ -85,7 +85,7 @@ class IntegrationTest(unittest.TestCase):
                 print '%s keep waiting...' % 'test_vocab_3_repos'
                 print latest_repo.started_at
                 sleep(5)
-        assert not found, 'Took too long and yet, nothing in the list of repos.'
+        assert found, 'Took too long and yet, nothing in the list of repos.'
         print latest_repo.started_at
         print latest_repo.name
 
