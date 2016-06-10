@@ -349,6 +349,9 @@ def workflow(changed_files, repo_str):
     global current_repo, current_user
     current_repo = Repo(name=repo_str, user=current_user, status="starting", started_at=datetime.now(), progress=10)
     current_repo.save()
+    dolog("deleting the repo if exists")
+    change_status("preparation", 10)
+    delete_forked_repo(repo_str)
     dolog("forking the repo %s"%(repo_str))
     change_status("forking", 20)
     repo_url = fork_repo(repo_str)
@@ -385,7 +388,6 @@ def workflow(changed_files, repo_str):
             current_repo.save()
             msg += " And pull request is created"
             dolog("deleting the forked repo attempt")
-            delete_forked_repo(repo_str)
         else:
             dolog("pull request is False")
             change_status("pull failed to be created", 100)
