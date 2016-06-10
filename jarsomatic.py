@@ -379,8 +379,8 @@ def copy_repo():
 
 def push_changes():
     comm = "cd %s;" \
-           "git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; " \
-           "git config user.name 'Jarsomatic' ; " \
+           "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; " \
+           "git config --global user.name 'Jarsomatic' ; " \
            "git pull -s ours --no-edit upstream gh-pages ; " \
            "git add . ; " \
            "git commit -m 'jarsomatic update p' ; " \
@@ -440,7 +440,7 @@ def workflow(changed_files, repo_str):
         dolog("after pushing the changes")
         change_status("creating pull request", 85)
         if create_pull_request(repo_str):
-            dolog("pull request is True.")
+            dolog("pull request is Trueee")
             change_status("pull request created", 100)
             current_repo.completed_at = datetime.now()
             current_repo.save()
