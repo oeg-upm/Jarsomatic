@@ -301,7 +301,8 @@ def update_fork(repo_str):
                "git reset --hard upstream/master ; " \
                "git add . ; " \
                "git commit -m 'Jarsomatic update h' ; " \
-               "git push -f origin master " % (get_repo_abs_path(), repo.clone_url)
+               "git push -f origin master " % (get_repo_abs_path(), repo.ssh_url)
+               #"git push -f origin master " % (get_repo_abs_path(), repo.clone_url)
         comm += append_comm
         dolog("update fork command: %s"%(comm))
         call(comm, shell=True)
