@@ -2,8 +2,6 @@ import ConfigParser
 
 from flask import Flask, request, redirect, url_for, render_template
 
-# import json
-# import simplejson as json
 import rson as json
 import re
 from subprocess import call
@@ -35,7 +33,6 @@ config.read(os.path.join(app_home, config_file))
 github_token = config.get('GITHUB', 'token')
 temp_dir = config.get('DEFAULT', 'tmp')
 g = Github(github_token)
-# logging.basicConfig(filename=log_filename, format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
 logging.basicConfig(filename=os.path.join(app_home, log_filename), format='%(asctime)s: %(message)s',
                     level=logging.DEBUG)
 connect("jarsomatic")
@@ -54,9 +51,6 @@ except Exception as e:
 @app.route("/")
 def hello():
     return render_template('home.html', repos=[r.json() for r in Repo.objects.all().order_by('-started_at')])
-    #return "Welcome to Jarsomatic" + "<br><br><a href='getlog'>see logs</a>"
-           #"<br><br><a href='testp'>Test Positive</a>" + \
-           #"<br><br><a href='testn'>Test Negative</a>"
 
 
 @app.route("/pull")
@@ -71,7 +65,6 @@ def pull_new_version():
 
 @app.route("/clearlog")
 def clearlog():
-    # f = open(log_filename, "w")
     f = open(os.path.join(app_home, log_filename), "w")
     f.close()
     return redirect(url_for('getlog'))
@@ -131,25 +124,11 @@ def test_negative():
 def webhook():
     global repo_rel_dir
     repo_rel_dir = ''.join([random.choice(string.ascii_letters+string.digits) for _ in range(9)])
-    # print "values <%s>\n\n"%(str(request.values))
-    # try:
-    #     print "form: %s"%(str(request.form))
-    #     # print "values of payload <%s>\n\n"%(str(request.form['payload']))
-    #     # print "values of payload <%s>\n\n"%(str(request.values['payload']))
-    # except:
-    #     pass
-    # print "data %s"%(str(request.data))
-    # values = request.values['payload']
-    # print "request: "+str(request)
     try:
         dolog("json: %s"%(str(request.json)))
-        # print "form: %s"%(str(request.form))
-        # print "values: %s"%(str(request.values))
-        # print "data: %s"%(str(request.data))
     except Exception as e:
         dolog("exception: "+str(e))
     values = request.json
-    # print "form %s"%(str(values))
     if values["ref"].strip() == "refs/heads/gh-pages":
         return "gh-pages push will be ignored"
     try:
@@ -161,37 +140,20 @@ def webhook():
             return "Process started to do the work"
     except Exception as e:
         return "Error forking the process: <%s>"%(str(e))
-    # return webhook_handler(values)
 
 
 def webhook_handler(payload):
-    # values are expected to be a dict
     try:
-        # print '\n\n****  values ***'
-        # for v in values.values():
-        #     print "\n*** v: "+str(v)
-        # print '\n\n**** keys ***'
-        # for v in values.keys():
-        #     print "\n*** k: "+str(v)
-        # print '\n\n**** items ***'
-        # for v in values.items():
-        #     print "\n*** i: "+str(v)
-        # values = json.loads(str(values))
-        # payload = values['payload']
-        # payload = values.get('payload')
         print "payload %s"%(str(payload))
-        # payload = values
     except Exception as e:
         dolog("exception: "+str(e))
         return "exception occurred \n"
-        # return "exception occurred %s"%(str(values))
     dolog("will get changed files from payload")
     changed_files = get_changed_files_from_payload(payload)
     dolog("will get the repo from payload")
     repo_str = get_repo_from_payload(payload)
     dolog("will proceed to the workflow")
     return workflow(changed_files, repo_str)
-    # return run_if_target(changed_files)
 
 
 def get_changed_files_from_commit(commit):
@@ -210,13 +172,8 @@ def get_changed_files_from_payload(payload):
 
 def get_repo_from_payload(payload):
     global repo_name
-    # print "will get fullname"
-    # for k in payload["repository"]:
-    #     print "k: %s"%(k)
     r = payload["repository"]["full_name"]
-    # print "will get name"
     repo_name = payload["repository"]["name"]
-    # print "repository: %s"%(r)
     return r
 
 
@@ -252,7 +209,6 @@ def fork_repo(repo_str):
     repo = g.get_repo(repo_str)
     dolog("repo %s"%(repo.full_name))
     try:
-        # print "will create fork"
         f = u.create_fork(repo)
         return f.clone_url
     except Exception as e:
@@ -283,16 +239,6 @@ def update_fork(repo_str):
     global g
     repo = g.get_repo(repo_str)
     try:
-        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic'
-        #  ; git branch ; git pull --no-edit -Xtheirs %s ; git add . ; git commit -m 'Jarsomatic update' ;
-        #  git push "%(get_repo_abs_path(), repo.clone_url)
-        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic'
-        #  ; git branch ; git remote add upstream %s ; git pull --no-edit -Xtheirs upstream master ; git add . ;
-        # git commit -m 'Jarsomatic update' ; git push origin master "%(get_repo_abs_path(), repo.clone_url)
-        # comm = "cd %s ; git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; git config user.name 'Jarsomatic'
-        #  ; git remote add upstream %s ; git pull upstream master ; git reset --hard upstream/master ; git add . ;
-        # git commit -m 'Jarsomatic update h' ; git push -f origin master "%(get_repo_abs_path(), repo.clone_url)
-
         comm = "cd %s ; " \
                "git config user.email 'jarsomatic@delicias.dia.fi.upm.es' ; " \
                "git config user.name 'Jarsomatic' ; " \
@@ -337,17 +283,10 @@ def run_if_target(changed_files, target_files, jar_command):
         print "Run"
         switch_to_gh_pages()
         comm = "cd "+get_repo_abs_path()+"; "  # Go to the project location
-        # Because we already get the fork
-        # if not TEST:
-        #     comm += "git pull; "  # get latest update
         comm += jar_command  # run the command and generate the output
         call(comm, shell=True)
-        # comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
-        # call(comm, shell=True)
         return found, "Run: "+comm
     else:
-        # comm = "cd "+temp_dir+"; rm -Rf "+repo_rel_dir
-        # call(comm, shell=True)
         dolog("Ignore")
         return found, "Ignore"
 
@@ -408,7 +347,6 @@ def delete_forked_repo(repo_str):
 
 def workflow(changed_files, repo_str):
     global current_repo, current_user
-    dolog("new workflow")
     current_repo = Repo(name=repo_str, user=current_user, status="starting", started_at=datetime.now(), progress=10)
     current_repo.save()
     dolog("forking the repo %s"%(repo_str))
@@ -459,7 +397,6 @@ def workflow(changed_files, repo_str):
         dolog("not found")
         current_repo.completed_at = datetime.now()
         current_repo.save()
-    # delete_local_copy()
     return msg
 
 
