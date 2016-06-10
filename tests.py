@@ -15,7 +15,7 @@ repo = clone_url.split(':')[1][:-4]
 print 'test folder: %s' % test_folder
 print 'repo %s ' % repo
 connect("jarsomatic")
-
+start_setup = False
 
 class IntegrationTest(unittest.TestCase):
 
@@ -31,6 +31,8 @@ class IntegrationTest(unittest.TestCase):
             wait until it is completed
         :return:
         """
+        if not start_setup:
+            return
         start_time = datetime.datetime.now()
         print 'start time: '+str(start_time)
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
@@ -64,7 +66,7 @@ class IntegrationTest(unittest.TestCase):
 
     def test_vocab_3_repos(self):
         start_time = datetime.datetime.now()
-        print '%s start time: %s' % (__name__, str(start_time))
+        print '%s start time: %s' % ('test_vocab_3_repos', str(start_time))
         s = 'VocabURI;domain'
         s += '\nhttp://purl.org/net/p-plan;e-Science,plan,provenance,scientific workflow'
         s += '\nhttp://purl.org/net/wf-motifs;e-Science,workflow abstraction'
@@ -80,14 +82,14 @@ class IntegrationTest(unittest.TestCase):
                 found = True
                 break
             else:
-                print '%s keep waiting...' % __name__
+                print '%s keep waiting...' % 'test_vocab_3_repos'
                 print latest_repo.started_at
                 sleep(5)
         assert not found, 'Took too long and yet, nothing in the list of repos.'
+        print latest_repo.started_at
+        print latest_repo.name
 
-
-    def test2(self):
-        pass
 
 if __name__ == '__main__':
+    start_setup = True  # so the test only run in the case of being called
     unittest.main()
