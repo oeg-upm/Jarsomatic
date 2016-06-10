@@ -41,7 +41,7 @@ class IntegrationTest(unittest.TestCase):
         f = open(self.vocabularies_abs_dir, 'w')
         f.write('')
         f.close()
-        comm = 'cd %s; git add .; git commot -m "tests cleaning step"; git push origin master ' % os.path.join(abs_tests_dir, test_folder)
+        comm = 'cd %s; git add .; git commit -m "tests cleaning step"; git push origin master ' % os.path.join(abs_tests_dir, test_folder)
         print "cleaning command: "+comm
         call(comm, shell=True)
         for i in xrange(5):
