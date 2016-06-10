@@ -408,6 +408,7 @@ def delete_forked_repo(repo_str):
 
 def workflow(changed_files, repo_str):
     global current_repo, current_user
+    dolog("new workflow")
     current_repo = Repo(name=repo_str, user=current_user, status="starting", started_at=datetime.now(), progress=10)
     current_repo.save()
     dolog("forking the repo %s"%(repo_str))
@@ -463,7 +464,7 @@ def workflow(changed_files, repo_str):
 
 
 def get_jar_config(config_file):
-    dolog("looking for: %s"%(config_file))
+    dolog("looking for: %s" % config_file)
     confi = ConfigParser.ConfigParser()
     if not os.path.isfile(config_file):
         dolog("\n*** The file: "+config_file+" is not here or is not accessible ***\n")
@@ -476,7 +477,7 @@ def get_jar_config(config_file):
         return None, None
     dolog("getting the command")
     jar_command = confi.get('DEFAULT', 'command')
-    dolog("jar_command: %s"%jar_command)
+    dolog("jar_command: %s" % jar_command)
     dolog("target files")
     target_files_str = confi.get('DEFAULT', 'watch')
     dolog("watch")
