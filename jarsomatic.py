@@ -380,7 +380,7 @@ def workflow(changed_files, repo_str):
         change_status("pushing changes", 80)
         push_changes()
         dolog("after pushing the changes")
-        change_status("creating pull request", 85)
+        change_status("creating pull request", 90)
         if create_pull_request(repo_str):
             dolog("pull request is Trueee")
             change_status("pull request created", 100)
