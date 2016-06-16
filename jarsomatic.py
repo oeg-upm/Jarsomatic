@@ -383,7 +383,7 @@ def workflow(changed_files, repo_str):
         dolog("after pushing the changes")
         change_status("creating pull request", 90)
         if create_pull_request(repo_str):
-            dolog("pull request is Trueee")
+            dolog("pull request is True")
             change_status("pull request created", 100)
             current_repo.completed_at = datetime.now()
             current_repo.save()
