@@ -4,7 +4,7 @@ from subprocess import call
 import datetime
 from time import sleep
 import ConfigParser
-import requests
+# import requests
 from github import Github
 
 from mongoengine import connect
@@ -46,7 +46,7 @@ class IntegrationTest(unittest.TestCase):
             print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
         config.read(os.path.join(app_home, config_file))
         github_token = config.get('GITHUB', 'token')
-        g = Github(github_token)
+        self.g = Github(github_token)
         comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
         comm += "git config --global user.name 'Test' ; "
         call(comm, shell=True)
