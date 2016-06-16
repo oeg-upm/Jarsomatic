@@ -4,6 +4,7 @@ from subprocess import call
 import datetime
 from time import sleep
 import ConfigParser
+import requests
 
 from mongoengine import connect
 
@@ -104,7 +105,11 @@ class IntegrationTest(unittest.TestCase):
             sleep(5)
             latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print latest_repo.progress
-
+        r = requests.get('http://ahmad88me.github.io/jarsomatic-vocab-test/site/index.html')
+        assert len(r.text.split('<tr id')) == 4, 'Number of vocabularies does not match'
+        assert 'p-plan' in r.text, 'p-plan is not in the index.html'
+        assert 'wf-motifs' in r.text, 'wf-motifs is not in index.html'
+        assert 'wf-invocation' in r.text, 'wf-invocation is not in index.html'
 
 if __name__ == '__main__':
     start_setup = True  # so the test only run in the case of being called
