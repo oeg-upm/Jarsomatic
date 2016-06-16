@@ -352,10 +352,11 @@ def workflow(changed_files, repo_str):
     dolog("deleting the repo if exists")
     change_status("preparation", 10)
     delete_forked_repo(repo_str)
-    dolog("forking the repo %s"%(repo_str))
+    time.sleep(60)  # for GitHub to avoid the unknown issues
+    dolog("forking the repo %s" % repo_str)
     change_status("forking", 20)
     repo_url = fork_repo(repo_str)
-    dolog("cloning the repo %s"%(repo_url))
+    dolog("cloning the repo %s" % repo_url)
     change_status("cloning", 30)
     clone_repo(repo_url)
     # fork_cleanup()
@@ -430,5 +431,5 @@ def get_repo_abs_path():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    #app.run()
+    # app.run()
 
