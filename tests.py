@@ -59,15 +59,21 @@ class IntegrationTest(unittest.TestCase):
         comm = 'cd %s; git add .; git commit -m "tests cleaning step"; git push origin master ' % os.path.join(abs_tests_dir, test_folder)
         print "cleaning command: "+comm
         call(comm, shell=True)
-        for i in xrange(5):
-            latest_repo = Repo.objects.all().order_by('-started_at')[0]
-            if latest_repo.started_at >= start_time:
-                self.repo = latest_repo
-                break
-            else:
-                print 'keep waiting...'
-                print latest_repo.started_at
-                sleep(5)
+        sleep(30)
+        latest_repo = Repo.objects.all().order_by('-started_at')[0]
+        while latest_repo.progress != 100:
+            print 'keep waiting...'
+            print latest_repo.started_at
+            sleep(15)
+        # for i in xrange(5):
+        #     latest_repo = Repo.objects.all().order_by('-started_at')[0]
+        #     if latest_repo.started_at >= start_time:
+        #         self.repo = latest_repo
+        #         break
+        #     else:
+        #         print 'keep waiting...'
+        #         print latest_repo.started_at
+        #         sleep(5)
         print 'preparation is done'
 
     def tearDown(self):
