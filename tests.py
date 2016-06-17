@@ -118,7 +118,7 @@ class IntegrationTest(unittest.TestCase):
             print latest_repo.progress
         original_repo = 'jarsomatic/'+repo.split('/')[1]
         print 'original repo: '+original_repo
-        r = self.g.get_repo('jarsomatic/'+repo)
+        r = self.g.get_repo('jarsomatic/'+original_repo)
         print 'get repo'
         c = r.get_file_contents('site/index.html', 'gh-pages').decoded_content
         print 'gotten the content'
