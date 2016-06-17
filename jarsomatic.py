@@ -1,8 +1,8 @@
 import ConfigParser
 
 from flask import Flask, request, redirect, url_for, render_template
-
-import rson as json
+import json
+#import rson as json
 import re
 from subprocess import call
 import os.path
@@ -53,9 +53,10 @@ def hello():
     return render_template('home.html', repos=[r.json() for r in Repo.objects.all().order_by('-started_at')])
 
 
-@app.route("/get_latest_repo_progress")
+@app.route("/get_latest_repo")
 def get_latest_repo_progress():
-    return str(Repo.objects.all().order_by('-started_at')[0].progress)
+    latest_repo = Repo.objects.all().order_by('-started_at')[0]
+    return json.dumps(latest_repo.json())
 
 
 @app.route("/pull")

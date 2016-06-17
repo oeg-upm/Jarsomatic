@@ -4,14 +4,14 @@ from subprocess import call
 import datetime
 from time import sleep
 import ConfigParser
-# import requests
+import requests
 from github import Github
 
 from mongoengine import connect
 
 from models import Repo
 
-abs_tests_dir = '/home/ahmad/tests'
+# abs_tests_dir = '/home/ahmad/tests'
 clone_url = 'git@github.com:ahmad88me/jarsomatic-vocab-test.git'
 test_folder = clone_url.split('/')[-1][:-4]
 repo = clone_url.split(':')[1][:-4]
@@ -23,7 +23,7 @@ start_setup = False
 
 class IntegrationTest(unittest.TestCase):
 
-    vocabularies_abs_dir = os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv')
+    # vocabularies_abs_dir = os.path.join(abs_tests_dir, test_folder, 'Vocabularies.csv')
     repo = None
 
     def setUp(self):
@@ -45,36 +45,30 @@ class IntegrationTest(unittest.TestCase):
         if not os.path.isfile(os.path.join(app_home, config_file)):
             print "\n*** The file: "+config_file+" is not here or is not accessible ***\n"
         config.read(os.path.join(app_home, config_file))
+        self.abs_tests_dir = config.get('DEFAULT', 'tmp')
+        self.vocabularies_abs_dir = os.path.join(self.abs_tests_dir, test_folder, 'Vocabularies.csv')
         github_token = config.get('GITHUB', 'token')
         self.g = Github(github_token)
         # comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
         # comm += "git config --global user.name 'Test' ; "
         # call(comm, shell=True)
-        comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
+        comm = 'cd %s; rm -Rf %s ; git clone %s ' % (self.abs_tests_dir, test_folder, clone_url)
         print "cloning command: "+comm
         call(comm, shell=True)
         f = open(self.vocabularies_abs_dir, 'w')
         f.write('')
         f.close()
-        comm = 'cd %s; git add .; git commit -m "tests cleaning step"; git push origin master ' % os.path.join(abs_tests_dir, test_folder)
+        comm = 'cd %s; git add .; git commit -m "tests cleaning step"; git push origin master ' % \
+               os.path.join(self.abs_tests_dir, test_folder)
         print "cleaning command: "+comm
         call(comm, shell=True)
         sleep(30)
-        latest_repo = Repo.objects.all().order_by('-started_at')[0]
-        while latest_repo.progress != 100:
+        latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+        while latest_repo['progress'] != 100:
             print 'clear - keep waiting...'
-            print latest_repo.started_at
+            print latest_repo['started_at']
             sleep(15)
-            latest_repo = Repo.objects.all().order_by('-started_at')[0]
-        # for i in xrange(5):
-        #     latest_repo = Repo.objects.all().order_by('-started_at')[0]
-        #     if latest_repo.started_at >= start_time:
-        #         self.repo = latest_repo
-        #         break
-        #     else:
-        #         print 'keep waiting...'
-        #         print latest_repo.started_at
-        #         sleep(5)
+            latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
         print 'preparation is done'
 
     def tearDown(self):
@@ -94,28 +88,16 @@ class IntegrationTest(unittest.TestCase):
         f.write(s)
         f.close()
         comm = "cd %s ; git add . ; git commit -m 'automated test 3'; git push;" % \
-               os.path.join(abs_tests_dir, test_folder)
-        # print 'pushing new vocabularies: '+comm
+               os.path.join(self.abs_tests_dir, test_folder)
         call(comm, shell=True)
         sleep(30)
-        latest_repo = Repo.objects.all().order_by('-started_at')[0]
-        # found = False
-        # for i in xrange(5):
-        #     latest_repo = Repo.objects.all().order_by('-started_at')[0]
-        #     if latest_repo.started_at >= start_time:
-        #         found = True
-        #         break
-        #     else:
-        #         print '%s keep waiting...' % 'test_vocab_3_repos'
-        #         print latest_repo.started_at
-        #         sleep(5)
-        # assert found, 'Took too long and yet, nothing in the list of repos.'
-        print latest_repo.started_at
-        print latest_repo.name
-        while latest_repo.progress != 100:
+        latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+        print latest_repo['started_at']
+        print latest_repo['name']
+        while latest_repo['progress'] != 100:
             sleep(15)
-            latest_repo = Repo.objects.all().order_by('-started_at')[0]
-            print latest_repo.progress
+            latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+            print latest_repo['progress']
         original_repo = 'jarsomatic/'+repo.split('/')[1]
         print 'original repo: '+original_repo
         r = self.g.get_repo(original_repo)
