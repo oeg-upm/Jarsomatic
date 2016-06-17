@@ -65,6 +65,7 @@ class IntegrationTest(unittest.TestCase):
             print 'clear - keep waiting...'
             print latest_repo.started_at
             sleep(15)
+            latest_repo = Repo.objects.all().order_by('-started_at')[0]
         # for i in xrange(5):
         #     latest_repo = Repo.objects.all().order_by('-started_at')[0]
         #     if latest_repo.started_at >= start_time:
@@ -113,7 +114,7 @@ class IntegrationTest(unittest.TestCase):
         print latest_repo.name
         while latest_repo.progress != 100:
             sleep(15)
-            # latest_repo = Repo.objects.all().order_by('-started_at')[0]
+            latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print latest_repo.progress
         response = self.g.get_repo('jarsomatic/'+repo).get_file_contents('site/index.html', 'gh-pages').decoded_content
         # r = requests.get('http://ahmad88me.github.io/jarsomatic-vocab-test/site/index.html')
