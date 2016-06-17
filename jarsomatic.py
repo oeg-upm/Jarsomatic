@@ -53,6 +53,11 @@ def hello():
     return render_template('home.html', repos=[r.json() for r in Repo.objects.all().order_by('-started_at')])
 
 
+@app.route("/get_latest_repo_progress")
+def get_latest_repo_progress():
+    return str(Repo.objects.all().order_by('-started_at')[0].progress)
+
+
 @app.route("/pull")
 def pull_new_version():
     comm = "cd %s; git pull --no-edit -Xtheirs origin master "%(app_home)

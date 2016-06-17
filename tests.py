@@ -47,9 +47,9 @@ class IntegrationTest(unittest.TestCase):
         config.read(os.path.join(app_home, config_file))
         github_token = config.get('GITHUB', 'token')
         self.g = Github(github_token)
-        comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
-        comm += "git config --global user.name 'Test' ; "
-        call(comm, shell=True)
+        # comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
+        # comm += "git config --global user.name 'Test' ; "
+        # call(comm, shell=True)
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (abs_tests_dir, test_folder, clone_url)
         print "cloning command: "+comm
         call(comm, shell=True)
