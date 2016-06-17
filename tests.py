@@ -116,7 +116,7 @@ class IntegrationTest(unittest.TestCase):
             sleep(15)
             latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print latest_repo.progress
-        original_repo = 'jarsomatic/'+repo
+        original_repo = 'jarsomatic/'+repo.split('/')[1]
         print 'original repo: '+original_repo
         r = self.g.get_repo('jarsomatic/'+repo)
         print 'get repo'
