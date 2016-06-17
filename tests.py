@@ -116,6 +116,12 @@ class IntegrationTest(unittest.TestCase):
             sleep(15)
             latest_repo = Repo.objects.all().order_by('-started_at')[0]
             print latest_repo.progress
+        original_repo = 'jarsomatic/'+repo
+        print 'original repo: '+original_repo
+        r = self.g.get_repo('jarsomatic/'+repo)
+        print 'get repo'
+        c = r.get_file_contents('site/index.html', 'gh-pages').decoded_content
+        print 'gotten the content'
         response = self.g.get_repo('jarsomatic/'+repo).get_file_contents('site/index.html', 'gh-pages').decoded_content
         # r = requests.get('http://ahmad88me.github.io/jarsomatic-vocab-test/site/index.html')
         assert len(response.split('<tr id')) == 4, 'Number of vocabularies does not match'
