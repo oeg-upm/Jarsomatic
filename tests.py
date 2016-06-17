@@ -122,7 +122,8 @@ class IntegrationTest(unittest.TestCase):
         print 'get repo'
         c = r.get_file_contents('site/index.html', 'gh-pages').decoded_content
         print 'gotten the content'
-        response = self.g.get_repo('jarsomatic/'+repo).get_file_contents('site/index.html', 'gh-pages').decoded_content
+        response = c
+        # self.g.get_repo('jarsomatic/'+repo).get_file_contents('site/index.html', 'gh-pages').decoded_content
         # r = requests.get('http://ahmad88me.github.io/jarsomatic-vocab-test/site/index.html')
         assert len(response.split('<tr id')) == 4, 'Number of vocabularies does not match'
         assert 'p-plan' in response, 'p-plan is not in the index.html'
