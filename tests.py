@@ -151,7 +151,7 @@ class IntegrationTest(unittest.TestCase):
             assert 'p-plan' in response, 'p-plan is not in the index.html'
             assert 'wf-motifs' in response, 'wf-motifs is not in index.html'
             assert 'wf-invocation' in response, 'wf-invocation is not in index.html'
-            assert 'ro-optimization' not in response, 'ro-optimization is not in index.html'
+            assert 'ro-optimization' in response, 'ro-optimization is not in index.html'
 
     def test_vocab_5_repos(self):
             comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
@@ -178,7 +178,7 @@ class IntegrationTest(unittest.TestCase):
             while latest_repo['progress'] != 100:
                 sleep(15)
                 latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
-                print 'test4: '+str(latest_repo['progress'])
+                print 'test5: '+str(latest_repo['progress'])
             original_repo = 'jarsomatic/'+repo.split('/')[1]
             print 'original repo: '+original_repo
             r = self.g.get_repo(original_repo)
