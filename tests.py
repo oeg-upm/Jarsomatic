@@ -47,11 +47,12 @@ class IntegrationTest(unittest.TestCase):
         config.read(os.path.join(app_home, config_file))
         self.abs_tests_dir = config.get('DEFAULT', 'tmp')
         self.vocabularies_abs_dir = os.path.join(self.abs_tests_dir, test_folder, 'Vocabularies.csv')
+        print 'vocabularies dir: '+self.vocabularies_abs_dir
         github_token = config.get('GITHUB', 'token')
         self.g = Github(github_token)
-        # comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
-        # comm += "git config --global user.name 'Test' ; "
-        # call(comm, shell=True)
+        comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
+        comm += "git config --global user.name 'Test' ; "
+        call(comm, shell=True)
         comm = 'cd %s; rm -Rf %s ; git clone %s ' % (self.abs_tests_dir, test_folder, clone_url)
         print "cloning command: "+comm
         call(comm, shell=True)
@@ -78,6 +79,10 @@ class IntegrationTest(unittest.TestCase):
         pass
 
     def test_vocab_3_repos(self):
+        pass
+        comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
+        comm += "git config --global user.name 'Test3' ; "
+        call(comm, shell=True)
         start_time = datetime.datetime.now()
         print '%s start time: %s' % ('test_vocab_3_repos', str(start_time))
         s = 'VocabURI;domain'
@@ -97,7 +102,7 @@ class IntegrationTest(unittest.TestCase):
         while latest_repo['progress'] != 100:
             sleep(15)
             latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
-            print latest_repo['progress']
+            print 'test3: '+str(latest_repo['progress'])
         original_repo = 'jarsomatic/'+repo.split('/')[1]
         print 'original repo: '+original_repo
         r = self.g.get_repo(original_repo)
@@ -105,12 +110,88 @@ class IntegrationTest(unittest.TestCase):
         c = r.get_file_contents('site/index.html', 'gh-pages').decoded_content
         print 'gotten the content'
         response = c
-        # self.g.get_repo('jarsomatic/'+repo).get_file_contents('site/index.html', 'gh-pages').decoded_content
-        # r = requests.get('http://ahmad88me.github.io/jarsomatic-vocab-test/site/index.html')
         assert len(response.split('<tr id')) == 4, 'Number of vocabularies does not match'
         assert 'p-plan' in response, 'p-plan is not in the index.html'
         assert 'wf-motifs' in response, 'wf-motifs is not in index.html'
         assert 'wf-invocation' in response, 'wf-invocation is not in index.html'
+
+    def test_vocab_4_repos(self):
+            comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
+            comm += "git config --global user.name 'Test4' ; "
+            call(comm, shell=True)
+            start_time = datetime.datetime.now()
+            print '%s start time: %s' % ('test_vocab_4_repos', str(start_time))
+            s = 'VocabURI;domain'
+            s += '\nhttp://purl.org/net/p-plan;e-Science,plan,provenance,scientific workflow'
+            s += '\nhttp://purl.org/net/wf-motifs;e-Science,workflow abstraction'
+            s += '\nhttp://purl.org/net/wf-invocation;e-Science,infrastructure,scientific workflow'
+            s += '\nhttp://purl.org/net/ro-optimization;e-Science,Research Object'
+            f = open(self.vocabularies_abs_dir, 'w')
+            f.write(s)
+            f.close()
+            comm = "cd %s ; git add . ; git commit -m 'automated test 4'; git push;" % \
+                   os.path.join(self.abs_tests_dir, test_folder)
+            call(comm, shell=True)
+            sleep(30)
+            latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+            print latest_repo['started_at']
+            print latest_repo['name']
+            while latest_repo['progress'] != 100:
+                sleep(15)
+                latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+                print 'test4: '+str(latest_repo['progress'])
+            original_repo = 'jarsomatic/'+repo.split('/')[1]
+            print 'original repo: '+original_repo
+            r = self.g.get_repo(original_repo)
+            print 'get repo'
+            c = r.get_file_contents('site/index.html', 'gh-pages').decoded_content
+            print 'gotten the content'
+            response = c
+            assert len(response.split('<tr id')) == 5, 'Number of vocabularies does not match'
+            assert 'p-plan' in response, 'p-plan is not in the index.html'
+            assert 'wf-motifs' in response, 'wf-motifs is not in index.html'
+            assert 'wf-invocation' in response, 'wf-invocation is not in index.html'
+            assert 'ro-optimization' not in response, 'ro-optimization is not in index.html'
+
+    def test_vocab_5_repos(self):
+            comm = "git config --global user.email 'jarsomatic@delicias.dia.fi.upm.es' ; "
+            comm += "git config --global user.name 'Test5' ; "
+            call(comm, shell=True)
+            start_time = datetime.datetime.now()
+            print '%s start time: %s' % ('test_vocab_5_repos', str(start_time))
+            s = 'VocabURI;domain'
+            s += '\nhttp://purl.org/net/p-plan;e-Science,plan,provenance,scientific workflow'
+            s += '\nhttp://purl.org/net/wf-motifs;e-Science,workflow abstraction'
+            s += '\nhttp://purl.org/net/wf-invocation;e-Science,infrastructure,scientific workflow'
+            s += '\nhttp://purl.org/net/ro-optimization;e-Science,Research Object'
+            s += '\nhttp://purl.org/net/wf-fd;e-Science,workflow abstraction'
+            f = open(self.vocabularies_abs_dir, 'w')
+            f.write(s)
+            f.close()
+            comm = "cd %s ; git add . ; git commit -m 'automated test 5'; git push;" % \
+                   os.path.join(self.abs_tests_dir, test_folder)
+            call(comm, shell=True)
+            sleep(30)
+            latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+            print latest_repo['started_at']
+            print latest_repo['name']
+            while latest_repo['progress'] != 100:
+                sleep(15)
+                latest_repo = requests.get('http://jarsomatic.linkeddata.es/get_latest_repo').json()
+                print 'test4: '+str(latest_repo['progress'])
+            original_repo = 'jarsomatic/'+repo.split('/')[1]
+            print 'original repo: '+original_repo
+            r = self.g.get_repo(original_repo)
+            print 'get repo'
+            c = r.get_file_contents('site/index.html', 'gh-pages').decoded_content
+            print 'gotten the content'
+            response = c
+            assert len(response.split('<tr id')) == 6, 'Number of vocabularies does not match'
+            assert 'p-plan' in response, 'p-plan is not in the index.html'
+            assert 'wf-motifs' in response, 'wf-motifs is not in index.html'
+            assert 'wf-invocation' in response, 'wf-invocation is not in index.html'
+            assert 'ro-optimization' in response, 'ro-optimization is not in index.html'
+            assert 'wf-fd' in response, 'wf-fd is not in index.html'
 
 
 if __name__ == '__main__':
