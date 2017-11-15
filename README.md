@@ -6,7 +6,7 @@ An application to run jar when a specific file(s) are changed on a repo in Githu
 Collaborators: Daniel Garijo (@dgarijo), Ahmad Alobaid
 
 ### Diagram: 
-![Image](../master/Jarsomatic Diagram.png?raw=true)
+![Image](https://github.com/ahmad88me/Jarsomatic/raw/master/Jarsomatic%20Diagram.png)
 
 
 ## How to use it
